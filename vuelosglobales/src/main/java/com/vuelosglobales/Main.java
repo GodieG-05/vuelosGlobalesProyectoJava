@@ -2,6 +2,12 @@ package com.vuelosglobales;
 
 import java.util.Scanner;
 
+import com.vuelosglobales.airports.adapters.in.AirportsConsoleAdapter;
+import com.vuelosglobales.airports.adapters.out.AirportsMySQLRepository;
+import com.vuelosglobales.airports.application.AirportsService;
+
+// import com.vuelosglobales.airports.adapters.in.AirportsConsoleAdapter;
+
 public class Main {
     // Codigo para limipiar consola
     public static void clearScreen() {         
@@ -30,6 +36,9 @@ public class Main {
         return x;
     }
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        AirportsMySQLRepository airportsMySQLRepository = new AirportsMySQLRepository(null, null, null);
+        AirportsService airportsService = new AirportsService(airportsMySQLRepository);
+        AirportsConsoleAdapter airportsConsoleAdapter = new AirportsConsoleAdapter(airportsService);
+        airportsConsoleAdapter.start();
     }
 }

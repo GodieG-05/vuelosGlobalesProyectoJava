@@ -4,7 +4,7 @@ import com.vuelosglobales.airports.domain.models.Airports;
 import com.vuelosglobales.airports.infrastructure.AirportsRepository;
 import java.sql.*;
 import java.util.Optional;
-
+ 
 public class AirportsMySQLRepository implements AirportsRepository{
     private final String url;
     private final String user;
@@ -19,9 +19,10 @@ public class AirportsMySQLRepository implements AirportsRepository{
     @Override
     public void save(Airports airport) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String query = "INSERT INTO airports (name) VALUES (?)";
+            String query = "INSERT INTO airports (name, id_city) VALUES (?,?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, airport.getName());
+                statement.setString(2, airport.getId_city());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -32,10 +33,11 @@ public class AirportsMySQLRepository implements AirportsRepository{
     @Override
     public void update(Airports airport) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String query = "UPDATE airports SET name = ? WHERE id = ?";
+            String query = "UPDATE airports SET name = ?, id_city = ? WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, airport.getName());
-                statement.setInt(2, airport.getId());
+                statement.setString(2, airport.getId_city());
+                statement.setInt(3, airport.getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -46,7 +48,7 @@ public class AirportsMySQLRepository implements AirportsRepository{
     @Override
     public Optional<Airports> findById(int id) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String query = "SELECT * FROM airportes WHERE id = ?";
+            String query = "SELECT * FROM airports WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setInt(1, id);
                 try (ResultSet resultSet = statement.executeQuery()) {

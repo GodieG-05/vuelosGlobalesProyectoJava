@@ -12,12 +12,12 @@ public class AirportsService {
         this.AirportsRepository = AirportsRepository;
     }
 
-    public void createAirports(Airports Airports) {
-        AirportsRepository.save(Airports);
+    public void createAirports(Airports Airport) {
+        AirportsRepository.save(Airport);
     }
 
-    public void updateAirports(Airports Airports) {
-        AirportsRepository.update(Airports);
+    public void updateAirports(Airports Airport) {
+        AirportsRepository.update(Airport);
     }
 
     public Optional<Airports> getAirportsById(int id) {

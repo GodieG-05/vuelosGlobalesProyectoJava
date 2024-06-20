@@ -2,10 +2,17 @@ package com.vuelosglobales.airports.adapters.in;
 
 import java.text.MessageFormat;
 import java.util.Scanner;
- 
+
 import com.vuelosglobales.Main;
+import com.vuelosglobales.airports.application.AirportsService;
+import com.vuelosglobales.airports.domain.models.Airports;
 public class AirportsConsoleAdapter {
 
+    private final AirportsService airportService;
+
+    public AirportsConsoleAdapter(AirportsService airportService){
+        this.airportService = airportService;
+    }
     public void start() {
         
         String header = """
@@ -34,6 +41,12 @@ public class AirportsConsoleAdapter {
 
             switch (op) {
                 case 1:
+                    System.out.print("Ingrese el nombre del aeropuerto: ");
+                    String name = sc.nextLine();
+                    System.out.print("Ingrese el id de la ciudad: ");
+                    String id_city = sc.nextLine();
+                    Airports newAirport = new Airports(1, name, id_city);
+                    airportService.createAirports(newAirport);
                     break;
                 case 2:
                     break;

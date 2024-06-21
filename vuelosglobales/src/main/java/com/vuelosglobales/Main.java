@@ -36,7 +36,7 @@ public class Main {
         return x;
     }
     public static void main(String[] args) {
-        AirportsMySQLRepository airportsMySQLRepository = new AirportsMySQLRepository(null, null, null);
+        AirportsMySQLRepository airportsMySQLRepository = new AirportsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "campus2023", "campus2023");
         AirportsService airportsService = new AirportsService(airportsMySQLRepository);
         AirportsConsoleAdapter airportsConsoleAdapter = new AirportsConsoleAdapter(airportsService);
         airportsConsoleAdapter.start();

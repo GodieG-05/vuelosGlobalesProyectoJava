@@ -1,11 +1,14 @@
 package com.vuelosglobales.airports.infrastructure;
 
-import com.vuelosglobales.airports.domain.models.Airports;
+import java.util.List;
 import java.util.Optional;
+
+import com.vuelosglobales.airports.domain.models.Airports;
 
 public interface AirportsRepository {
     void save(Airports airport);
     void update(Airports airport);
-    Optional<Airports> findById(int id);
-    void delete(int id);
+    Optional<Airports> findById(String id);
+    void delete(String id);
+    List<Airports> findAll();
 }

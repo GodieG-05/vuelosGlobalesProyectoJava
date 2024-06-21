@@ -1,21 +1,21 @@
 package com.vuelosglobales.airports.domain.models;
 
 public class Airports {
-    private int id;
+    private String id;
     private String name;
     private String id_city;
 
-    public Airports(int id,String name, String id_city) {
+    public Airports(String id,String name, String id_city) {
         this.id = id;
         this.name = name;
         this.id_city = id_city;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -35,8 +35,7 @@ public class Airports {
         this.id_city = id_city;
     }
 
-    @Override
-    public String toString() {
+    public String toString(String id, String name, String id_city) {
         return "Airports [id=" + id + ", name=" + name + ", id_city=" + id_city + "]";
     }
 

@@ -1,8 +1,10 @@
 package com.vuelosglobales.airports.application;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.vuelosglobales.airports.domain.models.Airports;
 import com.vuelosglobales.airports.infrastructure.AirportsRepository;
-import java.util.Optional;
 
 
 public class AirportsService {
@@ -20,11 +22,15 @@ public class AirportsService {
         AirportsRepository.update(Airport);
     }
 
-    public Optional<Airports> getAirportsById(int id) {
+    public Optional<Airports> getAirportsById(String id) {
         return AirportsRepository.findById(id);
     }
 
-    public void deleteAirports(int id) {
+    public void deleteAirports(String id) {
         AirportsRepository.delete(id);
+    }
+
+    public List<Airports> getAllAirports() {
+        return AirportsRepository.findAll();
     }
 }

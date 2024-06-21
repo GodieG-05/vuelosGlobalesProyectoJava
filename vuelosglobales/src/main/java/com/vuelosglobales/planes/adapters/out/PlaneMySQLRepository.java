@@ -1,4 +1,4 @@
-package com.vuelosglobales.planes.adapters.out;
+/* package com.vuelosglobales.planes.adapters.out;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -96,3 +96,4 @@ public class PlaneMySQLRepository implements PlaneRepository{
 
     
 }
+ */

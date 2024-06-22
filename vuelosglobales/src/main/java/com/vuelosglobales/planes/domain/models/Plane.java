@@ -1,6 +1,7 @@
 package com.vuelosglobales.planes.domain.models;
 
-import java.util.Date;
+import java.sql.Date;
+
 public class Plane {
     private int id;
     private String plates;
@@ -9,8 +10,7 @@ public class Plane {
     private int idStatus;
     private int idModel;
 
-    public Plane() {
-    }
+    public Plane() {}
 
     public Plane(int id, String plates, int capacity, Date fabricationDate, int idStatus, int idModel) {
         this.id = id;
@@ -45,11 +45,11 @@ public class Plane {
         this.capacity = capacity;
     }
 
-    public Date getFabricationDate() {
+    public java.sql.Date getFabricationDate() {
         return fabricationDate;
     }
 
-    public void setFabricationDate(Date fabricationDate) {
+    public void setFabricationDate(java.sql.Date fabricationDate) {
         this.fabricationDate = fabricationDate;
     }
 
@@ -69,12 +69,9 @@ public class Plane {
         this.idModel = idModel;
     }
 
-    @Override
     public String toString() {
-        return "Plane [id=" + id + ", plates=" + plates + ", capacity=" + capacity + ", fabricationDate="
+        return "[id=" + id + ", plates=" + plates + ", capacity=" + capacity + ", fabricationDate="
                 + fabricationDate + ", idStatus=" + idStatus + ", idModel=" + idModel + "]";
     }
-    
-
     
 }

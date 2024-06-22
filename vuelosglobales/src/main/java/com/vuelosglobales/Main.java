@@ -2,9 +2,12 @@ package com.vuelosglobales;
 
 import java.util.Scanner;
 
-import com.vuelosglobales.airports.adapters.in.AirportsConsoleAdapter;
+/* import com.vuelosglobales.airports.adapters.in.AirportsConsoleAdapter;
 import com.vuelosglobales.airports.adapters.out.AirportsMySQLRepository;
-import com.vuelosglobales.airports.application.AirportsService;
+import com.vuelosglobales.airports.application.AirportsService; */
+import com.vuelosglobales.documentTypes.adapters.in.DocumentTypesConsoleAdapter;
+import com.vuelosglobales.documentTypes.adapters.out.DocumentTypesMySQLRepository;
+import com.vuelosglobales.documentTypes.application.DocumentTypesService;
 
 // import com.vuelosglobales.airports.adapters.in.AirportsConsoleAdapter;
 
@@ -36,9 +39,13 @@ public class Main {
         return x;
     }
     public static void main(String[] args) {
-        AirportsMySQLRepository airportsMySQLRepository = new AirportsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "campus2023", "campus2023");
+        /* AirportsMySQLRepository airportsMySQLRepository = new AirportsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
         AirportsService airportsService = new AirportsService(airportsMySQLRepository);
         AirportsConsoleAdapter airportsConsoleAdapter = new AirportsConsoleAdapter(airportsService);
-        airportsConsoleAdapter.start();
+        airportsConsoleAdapter.start(); */
+        DocumentTypesMySQLRepository documentTypesMySQLRepository = new DocumentTypesMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
+        DocumentTypesService documentTypesService = new DocumentTypesService(documentTypesMySQLRepository);
+        DocumentTypesConsoleAdapter documentTypesConsoleAdapter = new DocumentTypesConsoleAdapter(documentTypesService);
+        documentTypesConsoleAdapter.start();
     }
 }

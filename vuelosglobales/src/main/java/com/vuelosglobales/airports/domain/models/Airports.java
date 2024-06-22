@@ -35,9 +35,8 @@ public class Airports {
         this.id_city = id_city;
     }
 
-    public String toString(String id, String name, String id_city) {
-        return "Airports [id=" + id + ", name=" + name + ", id_city=" + id_city + "]";
-    }
+    public String toString() {
+        return "[id=" + id + ", name=" + name + ", id_city=" + id_city + "]";
+    }   
 
-    
 }

@@ -19,7 +19,7 @@ public class AirportsConsoleAdapter {
     public void printAllAirports() {
         List<Airports> airportsList = airportService.getAllAirports();
         for (Airports airport : airportsList) {
-            System.out.println("[ID: " + airport.getId() + ", Nombre: " + airport.getName() + "]");
+            System.out.println(airport.toString());
         }
         System.out.println("\n");
     }
@@ -35,6 +35,7 @@ public class AirportsConsoleAdapter {
         Airports newAirport = new Airports(id, name, id_city);
         airportService.createAirports(newAirport);
     }
+    
     public void actualizarAeropuerto(String header, Scanner sc){
         Main.clearScreen();
         System.out.println(header);
@@ -44,7 +45,7 @@ public class AirportsConsoleAdapter {
         String id = sc.nextLine();
         Optional<Airports> selectedAirport = airportService.getAirportsById(id);
         if(selectedAirport.isPresent()){
-            System.out.println("[ID: " + selectedAirport.get().getId() + ", Nombre: " + selectedAirport.get().getName() + ", ID ciudad: " + selectedAirport.get().getId_city() + "]");
+            System.out.println(selectedAirport.get().toString());
             System.out.print("\nIngrese el nuevo nombre del aeropuerto: ");
             String name = sc.nextLine();
             System.out.print("Ingrese el nuevo id de la ciudad: "); 
@@ -58,7 +59,19 @@ public class AirportsConsoleAdapter {
         System.out.println(header);
         System.out.println("El aeropuerto fue actualizado con exito: ");
         Optional<Airports> updatedAirport = airportService.getAirportsById(id);
-        updatedAirport.ifPresentOrElse(a -> System.out.println("[ID: " + a.getId() + ", Nombre: " + a.getName() + ", ID ciudad: " + a.getId_city() + "]"),
+        updatedAirport.ifPresentOrElse(a -> System.out.println(a.toString()),
+        () -> System.out.println("Aeropuerto no encontrado"));
+    }
+
+    public void consultarAeropuerto(String header, Scanner sc){
+        Main.clearScreen();
+        System.out.println(header);
+        System.out.println("Aeropuertos:\n");
+        printAllAirports();
+        System.out.println("Ingrese el ID del aeropuerto a consultar: ");
+        String id = sc.nextLine(); 
+        Optional<Airports> updatedAirport = airportService.getAirportsById(id);
+        updatedAirport.ifPresentOrElse(a -> System.out.println(a.toString()),
         () -> System.out.println("Aeropuerto no encontrado"));
     }
 
@@ -68,22 +81,24 @@ public class AirportsConsoleAdapter {
         System.out.println("Aeropuertos:\n");
         printAllAirports();
         System.out.println("Ingrese el ID del aeropuerto a eliminar: ");
-        String id = sc.nextLine();
+        String id = sc.nextLine(); 
         Optional<Airports> airport = airportService.getAirportsById(id);
         if(airport.isPresent()){
-            System.out.println("\nEl aerpuerto con [ID: " + airport.get().getId() + ", Nombre: " + airport.get().getName() + ", ID ciudad: " + airport.get().getId_city() + "] será eliminado");
+            System.out.println(MessageFormat.format("\nEl aerpuerto {0} será eliminado", airport.get().toString()));
             System.out.println("\n¿Desea continuar? \npresione ENTER para si o cualquier tecla para no");
-            String rta = sc.nextLine();
-            if(rta.isEmpty()){
+            String cnf = sc.nextLine();
+            if(cnf.isEmpty()){
                 airportService.deleteAirports(id);
                 System.out.println("Aeropuerto eliminado exitosamente");
             } else {
                 System.out.println("El aeropuerto no ha sido eliminado");
             }
         } else {
-            System.out.println("[¡]ERROR. Aeropuerto no registrado ");
+            System.out.println("[¡]ERROR: Aeropuerto no registrado ");
         }
     }
+
+    
     public void start() {
         
         String header = """
@@ -93,7 +108,7 @@ public class AirportsConsoleAdapter {
             """;
         String[] menu = {"Registrar Aeropuerto","Actualizar Aeropuerto","Consultar Aeropuerto","Eliminar Aeropuerto","Salir"};
         
-        String errMessage = "Error: El dato ingresado es incorrecto, intentelo de nuevo ";
+        String errMessage = "[¡]ERROR: El dato ingresado es incorrecto, intentelo de nuevo ";
         
         Scanner sc = new Scanner(System.in);
         boolean isActive = true;
@@ -126,6 +141,11 @@ public class AirportsConsoleAdapter {
                     } while (!respuesta.isEmpty());
                     break;
                 case 3:
+                    do {
+                        consultarAeropuerto(header, sc);
+                        System.out.println("Desea consultar otro aeropuerto? si/ENTER");
+                        respuesta = sc.nextLine();
+                    } while (!respuesta.isEmpty());
                     break;                   
                 case 4:
                     do {

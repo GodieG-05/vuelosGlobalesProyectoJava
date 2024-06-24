@@ -129,4 +129,40 @@ public class DocumentTypesMySQLRepository implements DocumentTypesReporitory{
         return documentType;
     }
 
+    @Override
+    public List<String> getTableValues(String tableName) {
+        List<String> values = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT id, name FROM " + tableName;
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        String name = resultSet.getString("name");
+                        String value = "[id=" + id + ", name=" + name + "]";
+                        values.add(value);
+                    }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return values;
+    }
+    @Override
+    public List<Integer> getIDs(String tableName) {
+        List<Integer> IDsLsit = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT id FROM " + tableName;
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        IDsLsit.add(id);
+                    }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return IDsLsit;
+    }
 }

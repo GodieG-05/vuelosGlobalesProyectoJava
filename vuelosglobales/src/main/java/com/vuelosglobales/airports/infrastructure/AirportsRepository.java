@@ -11,4 +11,6 @@ public interface AirportsRepository {
     void delete(String id);
     Optional<Airports> findById(String id);
     List<Airports> findAll();
+    List<String> getTableValues(String tableName);
+    List<String> getIDs(String tableName);
 }

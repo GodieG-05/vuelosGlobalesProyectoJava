@@ -12,4 +12,6 @@ public interface DocumentTypesReporitory {
     void delete(int id);
     Optional<DocumentTypes> findById(int id);
     List<DocumentTypes> findAll();
+    List<String> getTableValues(String tableName);
+    List<Integer> getIDs(String tableName);
 }

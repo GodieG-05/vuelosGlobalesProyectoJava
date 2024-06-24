@@ -3,12 +3,12 @@ package com.vuelosglobales.airports.domain.models;
 public class Airports {
     private String id;
     private String name;
-    private String id_city;
+    private String idCity;
 
-    public Airports(String id,String name, String id_city) {
+    public Airports(String id,String name, String idCity) {
         this.id = id;
         this.name = name;
-        this.id_city = id_city;
+        this.idCity = idCity;
     }
 
     public String getId() {
@@ -27,16 +27,16 @@ public class Airports {
         this.name = name;
     }
 
-    public String getId_city() {
-        return id_city;
+    public String getIdCity() {
+        return idCity;
     }
 
-    public void setId_city(String id_city) {
-        this.id_city = id_city;
+    public void setIdCity(String id_city) {
+        this.idCity = id_city;
     }
 
     public String toString() {
-        return "[id=" + id + ", name=" + name + ", id_city=" + id_city + "]";
+        return "[id=" + id + ", name=" + name + ", id_city=" + idCity + "]";
     }   
 
 }

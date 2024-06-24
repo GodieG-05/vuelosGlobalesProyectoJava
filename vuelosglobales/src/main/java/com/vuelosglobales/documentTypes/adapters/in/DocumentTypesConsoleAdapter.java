@@ -17,90 +17,86 @@ public class DocumentTypesConsoleAdapter {
         this.documentTypesService = documentTypesService;
     }
 
-    public void printAllDocumentTypes() {
-        List<DocumentTypes> documentTypesList = documentTypesService.getAllDocumentTypes();
-        for (DocumentTypes documentType : documentTypesList) {
-            System.out.println(documentType.toString());
+    public void printAllValues(String tableName){
+        List<String> valuesList = documentTypesService.getAllValues(tableName);
+        for (String value : valuesList) {
+            System.out.println(value);
         }
-        System.out.println("\n");
+    }
+
+    public int existsId(String txt, String errMessage1, String errMessage2, Scanner sc, String tableName){
+        List<Integer> IDsLsit = documentTypesService.getIDs(tableName);
+        printAllValues(tableName);
+        int fId;
+        do {
+            fId = Main.validInt(sc, errMessage1, txt);
+            if (!IDsLsit.contains(fId)) {
+                System.out.println(errMessage2);
+            }
+        } while (!IDsLsit.contains(fId));
+        return fId;
     }
 
     public void registrarTipoDocumento(String header, String errMessage ,Scanner sc, String rta){
         while (!rta.isEmpty()) {            
             Main.clearScreen();
             System.out.println(header);
-            int id = documentTypesService.getLastId();
+            int id = documentTypesService.getLastId() + 1;
             System.out.print("Ingrese el nombre del tipo de documento: ");
             String name = sc.nextLine();
             DocumentTypes newDocumentType = new DocumentTypes(id, name);
             documentTypesService.createDocumentTypes(newDocumentType);
+            Optional<DocumentTypes> createdDocumentType = documentTypesService.getDocumentTypesById(id);
+            createdDocumentType.ifPresentOrElse(a -> System.out.println("\nEl tipo de documento: " + a.toString() + " fue registrado correctamente."),
+            () -> System.out.println("El tipo de documento no fue registrado correctamente"));
             System.out.println("Desea ingresar otro tipo de documento? si/ENTER");
             rta = sc.nextLine();
         }
     }
 
     public void actualizarTipoDocumento(String header, String errMessage, Scanner sc, String rta){
-        op2Loop:
         while (!rta.isEmpty()) {            
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tipos de documento:\n");
-            printAllDocumentTypes();
-            int id = Main.validInt(sc, errMessage, "Ingrese el id del tipo de documento a actualizar: ");
-            if(id == -1){
-                continue op2Loop;
-            }
+            int id = existsId("\nIngrese el id del tipo de documento a actualizar: ", errMessage, "\nTipo de documento no encontrado, Intente de nuevo", sc, "document_types");            
             Optional<DocumentTypes> selectedDocumentType = documentTypesService.getDocumentTypesById(id);
             if(selectedDocumentType.isPresent()){
-                System.out.println(selectedDocumentType.get().toString());
+                System.out.println("\nTipo de documento seleccionado: \n" + selectedDocumentType.get().toString());
                 System.out.print("\nIngrese el nuevo nombre del tipo de documento: ");
                 String name = sc.nextLine();
                 DocumentTypes documentTypeToUpdate = new DocumentTypes(id, name);
                 documentTypesService.updateDocumentTypes(documentTypeToUpdate);
-            } else {
-                System.out.println("Tipo de documento no encontrado");
             }
             Main.clearScreen();
             System.out.println(header);
-            System.out.println("El tipo de documento fue actualizado con exito: ");
-            Optional<DocumentTypes> updatedAirport = documentTypesService.getDocumentTypesById(id);
-            updatedAirport.ifPresentOrElse(a -> System.out.println(a.toString()),
-            () -> System.out.println("Tipo de documento no encontrado"));
-            System.out.println("\nDesea ingresar otro tipo de documento? si/ENTER");
+            Optional<DocumentTypes> updatedDocumentType = documentTypesService.getDocumentTypesById(id);
+            updatedDocumentType.ifPresentOrElse(a -> System.out.println("El tipo de documento: " + a.toString() + " fue actualizado correctamente."), 
+            () -> System.out.println("El tipo de documento no fue actualizado correctamente"));
+            System.out.println("\nDesea actualizar otro tipo de documento? si/ENTER");
             rta = sc.nextLine();
         }
     }
 
     public void consultarTipoDocumento(String header, String errMessage, Scanner sc, String rta){
-        op3Loop:
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tipos de documento:\n");
-            printAllDocumentTypes();
-            int id = Main.validInt(sc, errMessage, "Ingrese el ID del tipo de documento a consultar: "); 
-            if (id == -1){
-                continue op3Loop;
-            } 
-            Optional<DocumentTypes> updatedDocumentType = documentTypesService.getDocumentTypesById(id);
-            updatedDocumentType.ifPresentOrElse(a -> System.out.println(a.toString()),
-            () -> System.out.println("Aeropuerto no encontrado"));
-            System.out.println("Desea eliminar otro aeropuerto? si/ENTER");
+            int id = existsId("\nIngrese el id del tipo de documento a consultar: ", errMessage, "\nTipo de documento no encontrado, Intente de nuevo", sc, "document_types");             
+            Optional<DocumentTypes> selectedDocumentType = documentTypesService.getDocumentTypesById(id);
+            if (selectedDocumentType.isPresent()) { System.out.println(selectedDocumentType.get().toString()); }
+            System.out.println("\nDesea consultar otro aeropuerto? si/ENTER");
             rta = sc.nextLine();
         }
     }
 
     public void elimninarTipoDocumento(String header, String errMessage, Scanner sc, String rta){
-        op3Loop:
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tipos de documento:\n");
-            printAllDocumentTypes();
-            int id = Main.validInt(sc, errMessage, "Ingrese el ID del tipo de documento a eliminar: "); 
-            if (id == -1){
-                continue op3Loop;
-            }
+            int id = existsId("\nIngrese el id del tipo de documento a eliminar: ", errMessage, "\nTipo de documento no encontrado, Intente de nuevo", sc, "document_types");
             Optional<DocumentTypes> documentType = documentTypesService.getDocumentTypesById(id);
             if(documentType.isPresent()){
                 System.out.println(MessageFormat.format("\nEl tipo de documento {0} será eliminado", documentType.get().toString()));
@@ -108,19 +104,17 @@ public class DocumentTypesConsoleAdapter {
                 String cnf = sc.nextLine();
                 if(cnf.isEmpty()){
                     documentTypesService.deleteDocumentTypes(id);
-                    Main.clearScreen();
-                    System.out.println(header);
-                    System.out.println("Tipo de documento eliminado exitosamente");
                 } else {
                     System.out.println("El tipo de documento no ha sido eliminado");
                 }
-            } else {
-                System.out.println("[¡]ERROR: tipo de documento no registrado ");
             }
-            System.out.println("Desea eliminar otro aeropuerto? si/ENTER");
+            Optional<DocumentTypes> deletedDocumentType = documentTypesService.getDocumentTypesById(id);
+            if (!deletedDocumentType.isPresent()) { System.out.println("Tipo de documento eliminado exitosamente"); }
+            System.out.println("Desea eliminar otro tipo de documento? si/ENTER");
             rta = sc.nextLine();
         }
     }
+
     public void start() {
         
         String header = """

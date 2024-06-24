@@ -33,7 +33,11 @@ public class DocumentTypesService {
         DocumentTypesReporitory.delete(id);
     }
 
-    public List<DocumentTypes> getAllDocumentTypes() {
-        return DocumentTypesReporitory.findAll();
+    public List<String> getAllValues(String tableName) {
+        return DocumentTypesReporitory.getTableValues(tableName);
+    }
+
+    public List<Integer> getIDs(String tableName) {
+        return DocumentTypesReporitory.getIDs(tableName);
     }
 }

@@ -12,6 +12,10 @@ public class PlaneService {
         this.planeRepository = planeRepository;
     }
 
+    public int getLastId(){
+        return planeRepository.getLastId();
+    }
+
     public void createPlane(Plane plane) {
         planeRepository.save(plane);
     }
@@ -28,9 +32,11 @@ public class PlaneService {
         planeRepository.delete(id);
     }
 
-    public List<Plane> getAllPlanes() {
-        return planeRepository.findAll();
+    public List<String> getAllValues(String tableName) {
+        return planeRepository.getTableValues(tableName);
     }
 
-    
+    public List<Integer> getIDs(String tableName) {
+        return planeRepository.getIDs(tableName);
+    }
 }

@@ -27,10 +27,30 @@ public class PlaneMySQLRepository implements PlaneRepository{
         this.password = password;
     }
 
+    
+
+    @Override
+    public int getLastId() {
+        try (Connection connection = DriverManager.getConnection(url, user, password)){
+            String query = "SELECT MAX(id) AS max_id FROM planes";
+            try (PreparedStatement statement = connection.prepareStatement(query)){
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if(resultSet.next()){
+                        int maxId = resultSet.getInt("max_id");
+                        return maxId;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } 
+        return -1;
+    }
+
     @Override
     public void save (Plane plane) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String query = "INSERT INTO planes (plates, capacity, fabricationDate, idStatus, idModel) VALUES (?,?,?,?,?,?)";
+            String query = "INSERT INTO planes (plates, capacity, fabrication_date, id_status, id_model) VALUES (?,?,?,?,?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, plane.getPlates());
                 statement.setInt(2, plane.getCapacity());
@@ -47,13 +67,14 @@ public class PlaneMySQLRepository implements PlaneRepository{
     @Override
     public void update(Plane plane) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String query = "UPDATE planes SET plates = ?, capacity = ?, fabricationDate = ?, idStatus = ?, idModels = ? WHERE id = ?"; // se debe actualizar el query
+            String query = "UPDATE planes SET plates = ?, capacity = ?, fabrication_date = ?, id_status = ?, id_model = ? WHERE id = ?"; // se debe actualizar el query
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, plane.getPlates());
                 statement.setInt(2, plane.getCapacity());
                 statement.setDate(3, plane.getFabricationDate());
                 statement.setInt(4, plane.getIdStatus());
                 statement.setInt(5, plane.getIdModel());
+                statement.setInt(6, plane.getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -73,9 +94,9 @@ public class PlaneMySQLRepository implements PlaneRepository{
                             resultSet.getInt("id"),
                             resultSet.getString("plates"),
                             resultSet.getInt("capacity"),
-                            resultSet.getDate("fabricationDate"),
-                            resultSet.getInt("idStatus"),
-                            resultSet.getInt("idModel")
+                            resultSet.getDate("fabrication_date"),
+                            resultSet.getInt("id_status"),
+                            resultSet.getInt("id_model")
                         );
                         return Optional.of(plane);
                     }
@@ -90,8 +111,18 @@ public class PlaneMySQLRepository implements PlaneRepository{
     @Override
     public void delete(int id) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String query = "DELETE FROM plane WHERE id = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
+            String query1 = "DELETE FROM revisions WHERE id_plane = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query1)) {
+                statement.setInt(1, id);
+                statement.executeUpdate();
+            }
+            String query2 = "DELETE FROM flight_connections WHERE id_plane = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query2)) {
+                statement.setInt(1, id);
+                statement.executeUpdate();
+            }
+            String query3 = "DELETE FROM planes WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query3)) {
                 statement.setInt(1, id);
                 statement.executeUpdate();
             }
@@ -112,9 +143,9 @@ public class PlaneMySQLRepository implements PlaneRepository{
                         resultSet.getInt("id"),
                         resultSet.getString("plates"),
                         resultSet.getInt("capacity"),
-                        resultSet.getDate("fabricationDate"),
-                        resultSet.getInt("idStatus"),
-                        resultSet.getInt("idModel")
+                        resultSet.getDate("fabrication_date"),
+                        resultSet.getInt("id_status"),
+                        resultSet.getInt("id_model")
                     );
                     planes.add(plane);
                 }
@@ -126,5 +157,52 @@ public class PlaneMySQLRepository implements PlaneRepository{
     }
 
 
+
+    @Override
+    public List<String> getTableValues(String tableName) {
+        List<String> values = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = (tableName == "planes") ? "SELECT id, plates FROM " + tableName : "SELECT id, name FROM " + tableName;
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String value = "";
+                        switch (tableName) {
+                            case "planes":
+                                int idPlane = resultSet.getInt("id");
+                                String plates = resultSet.getString("plates");
+                                value = "[id=" + idPlane + ", name=" + plates + "]";
+                                break;
+                            default:
+                                int id = resultSet.getInt("id");
+                                String name = resultSet.getString("name");
+                                value = "[id=" + id + ", name=" + name + "]";
+                                break;
+                            }
+                        values.add(value);
+                    }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return values;
+    }
     
+    @Override
+    public List<Integer> getIDs(String tableName) {
+        List<Integer> IDsLsit = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT id FROM " + tableName;
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        IDsLsit.add(id);
+                    }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return IDsLsit;
+    }
 }

@@ -33,4 +33,12 @@ public class AirportsService {
     public List<Airports> getAllAirports() {
         return AirportsRepository.findAll();
     }
+
+    public List<String> getTableValues(String tableName) {
+        return AirportsRepository.getTableValues(tableName);
+    }
+
+    public List<String> getIDs(String tableName) {
+        return AirportsRepository.getIDs(tableName);
+    }
 }

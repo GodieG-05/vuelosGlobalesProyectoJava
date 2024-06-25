@@ -76,7 +76,7 @@ public class Main {
         PlaneService planeService = new PlaneService(planeMySQLRepository);
         PlanesConsoleAdapter planesConsoleAdapter = new PlanesConsoleAdapter(planeService);
         planesConsoleAdapter.start(); */
-        TripsMySQLRepository tripsMySQLRepository = new TripsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "campus2023", "campus2023");
+        TripsMySQLRepository tripsMySQLRepository = new TripsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
         TripsService tripsService = new TripsService(tripsMySQLRepository);
         TripsConsoleAdapter tripsConsoleAdapter = new TripsConsoleAdapter(tripsService);
         tripsConsoleAdapter.start();

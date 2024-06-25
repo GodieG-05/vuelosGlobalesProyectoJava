@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.vuelosglobales.trips.domain.models.Scales;
 import com.vuelosglobales.trips.domain.models.Trips;
 import com.vuelosglobales.trips.infrastructure.TripsRepository;
 
@@ -75,6 +76,35 @@ public class TripsMySQLRepository implements TripsRepository{
             e.printStackTrace();
         }
     }
+    
+    @Override
+    public Optional<Scales> updateScale(Scales scale) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query1 = "UPDATE flight_connections SET id_origin = ?, id_destination = ? WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query1)) {
+                statement.setString(1, scale.getIdOrg());
+                statement.setString(2, scale.getIdDes());
+                statement.setInt(3, scale.getId());
+                statement.executeUpdate();
+            }
+            String query2 = "SELECT id, id_origin, id_destination FROM flight_connections WHERE id = " + scale.getId();
+            try (PreparedStatement statement = connection.prepareStatement(query2);
+                     ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Scales updatedScales = new Scales(
+                            resultSet.getInt("id"),
+                            resultSet.getString("id_origin"),
+                            resultSet.getString("id_destination")
+                        );
+                        return Optional.of(updatedScales);
+                    }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+
+    }
 
     @Override
     public void delete(int id) {
@@ -115,6 +145,38 @@ public class TripsMySQLRepository implements TripsRepository{
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Optional<Scales> deleteScale(int id) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            Scales deletedScales = new Scales(0, "", "");
+            String query2 = "DELETE FROM trip_crews WHERE id_connection = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query2)) {
+                statement.setInt(1, id);
+                statement.executeUpdate();
+            }
+            String query3 = "DELETE FROM flight_connections WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query3)) {
+                statement.setInt(1, id);
+                statement.executeUpdate();
+            }
+            String query1 = "SELECT id, id_origin, id_destination FROM flight_connections WHERE id = " + id;
+            try (PreparedStatement statement = connection.prepareStatement(query1);
+                     ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    deletedScales = new Scales(
+                        resultSet.getInt("id"),
+                        resultSet.getString("id_origin"),
+                        resultSet.getString("id_destination")
+                    );
+                }
+            }
+            return Optional.of(deletedScales);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }   
+        return Optional.empty();     
     }
 
     @Override
@@ -251,7 +313,30 @@ public class TripsMySQLRepository implements TripsRepository{
     }
 
     @Override
-    public Optional<ArrayList<String>> findScales(int idTrip) {
+    public Optional<ArrayList<String>> findScale(int id) {
+        ArrayList<String> scalesArray = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = """
+                SELECT id, id_origin, id_destination FROM flight_connections WHERE id = ?
+                    """;
+            try (PreparedStatement statement = connection.prepareStatement(query)){
+                statement.setInt(1, id);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            String scale = "id=" + resultSet.getInt("id") + ", id_origin_airport=" + resultSet.getString("id_origin") + ", id_destination_airport=" + resultSet.getString("id_destination");
+                            scalesArray.add(scale);
+                        }
+                    }
+                    return Optional.of(scalesArray);
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ArrayList<String>> findScalesFromTrip(int idTrip) {
         ArrayList<String> scalesArray = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             String query = """
@@ -287,11 +372,14 @@ public class TripsMySQLRepository implements TripsRepository{
                 case "trips":
                     query = "SELECT id, trip_date, price_trip FROM " + tableName;
                     break;
-                case "employees":
+                case "employees","airports":
                     query = "SELECT id, name FROM " + tableName;
                     break;
                 case "planes":
                     query = "SELECT id, plates FROM " + tableName;
+                    break;
+                case "flight_connections":
+                    query = "SELECT id, id_origin, id_destination FROM " + tableName;
                     break;
                 default:
                     query = "";
@@ -308,15 +396,21 @@ public class TripsMySQLRepository implements TripsRepository{
                                 Double priceTrip = resultSet.getDouble("price_trip");
                                 value = "[id=" + idTrip + ", trip_date=" + tripDate + ", price_trip=" + priceTrip + "]";
                                 break;
-                            case "employees":
-                                String idEmployee = resultSet.getString("id");
+                            case "employees", "airports":
+                                String id = resultSet.getString("id");
                                 String name = resultSet.getString("name");
-                                value = "[id=" + idEmployee + ", name=" + name + "]";
+                                value = "[id=" + id + ", name=" + name + "]";
                                 break;
                             case "planes":
                                 String idPLane = resultSet.getString("id");
                                 String plates = resultSet.getString("plates");
                                 value = "[id=" + idPLane + ", plates=" + plates + "]";
+                                break;
+                            case "flight_connections":
+                                int idScale = resultSet.getInt("id");
+                                String idOrg = resultSet.getString("id_origin");
+                                String idDes = resultSet.getString("id_destination");
+                                value = "[id=" + idScale + ", id_origin_airport=" + idOrg + ", id_destination_airport=" + idDes +"]";
                                 break;
                         }
                         values.add(value);

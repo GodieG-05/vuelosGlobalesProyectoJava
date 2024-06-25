@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import com.vuelosglobales.Main;
 import com.vuelosglobales.trips.application.TripsService;
+import com.vuelosglobales.trips.domain.models.Scales;
 import com.vuelosglobales.trips.domain.models.Trips;
 
 public class TripsConsoleAdapter {
@@ -110,16 +111,68 @@ public class TripsConsoleAdapter {
             System.out.println(header);
             System.out.println("Trayectos:\n");
             Object id = existsId("\nIngrese el id del trayecto para consultar sus escalas: ", errMessage, "\nTrayecto no encontrado, Intente de nuevo", sc, true, "trips");
-            Optional<ArrayList<String>> escalas = tripsService.getScales((Integer)id);
+            Optional<ArrayList<String>> escalas = tripsService.getScalesFromTrip((Integer)id);
             if (escalas.isPresent()) { 
                 System.out.println("\nEscalas del trayecto:");
                 for (String escala : escalas.get()) {
                     System.out.println(escala); 
                 }
             } else {
-                System.out.println("\nTrayecto sin tripulacion asignada");
+                System.out.println("\nTrayecto sin escalas asignadas");
             }
-            System.out.println("\nDesea consultar otra tripulacion? si/ENTER");
+            System.out.println("\nDesea consultar otra escala? si/ENTER");
+            rta = sc.nextLine();
+        }
+    }
+
+    public void actualizarEscala (String header, String errMessage, Scanner sc, String rta){
+        while (!rta.isEmpty()) {
+            Main.clearScreen();
+            System.out.println(header);
+            System.out.println("Escalas:\n");
+            Object id = existsId("\nIngrese el id de la escala a actualizar: ", errMessage, "\nEscala no encontrada, Intente de nuevo", sc, true, "flight_connections");
+            Optional<ArrayList<String>> selectedScale = tripsService.getScales((Integer)id);
+            Optional<Scales> updatedScale = Optional.empty();
+            if (selectedScale.isPresent()){
+                System.out.println("\nEscala seleccionada: \n" + selectedScale.get().toString());
+                System.out.println("\nAerouertos:");
+                Object idOrg = existsId("\nIngrese el id del aeropuerto de origen de la escala: ", errMessage, "\nAeropuerto no encontrado, Intente de nuevo", sc, false, "airports");
+                Object idDes;
+                do {
+                    System.out.println("\nAerouertos:");
+                    idDes = existsId("\nIngrese el id del aeropuerto de destino de la escala: ", errMessage, "\nAeropuerto no encontrado, Intente de nuevo", sc, false, "airports");
+                    if (idOrg.equals(idDes)) { System.out.println("\nEl aeropuerto de destino no puede ser el mismo que el de origen, Intente de nuevo"); }
+                } while (idOrg.equals(idDes));
+                Scales scale = new Scales((Integer)id, String.valueOf(idOrg), String.valueOf(idDes));
+                updatedScale = tripsService.updateScale(scale);
+            }
+            updatedScale.ifPresentOrElse((s -> System.out.println("\nLa escala: " + s.toString() + " fue actualizada correctamente.")),
+            () -> System.out.println("La escala no fue actualizada correctamente"));
+            System.out.print("\nDesea actualizar otra escala? si/ENTER");
+            rta = sc.nextLine();
+        }
+    }
+
+    public void eliminarEscala (String header, String errMessage, Scanner sc, String rta){
+        while (!rta.isEmpty()) {
+            Main.clearScreen();
+            System.out.println(header);
+            System.out.println("Escalas:\n");
+            Object id = existsId("\nIngrese el id de la escala a eliminar: ", errMessage, "\nEscala no encontrada, Intente de nuevo", sc, true, "flight_connections");
+            Optional<ArrayList<String>> selectedScale = tripsService.getScales((Integer)id);
+            Optional<Scales> deletedScale = Optional.empty();
+            if (selectedScale.isPresent()) {
+                System.out.println(MessageFormat.format("\nLa escala {0} será eliminada", selectedScale.get().toString()));
+                System.out.println("\n¿Desea continuar? \npresione ENTER para si o cualquier tecla para no");
+                String cnf = sc.nextLine();
+                if (cnf.isEmpty()) {
+                    tripsService.deleteScale((Integer)id);
+                } else {
+                    System.out.println("La escala no ha sido eliminada");
+                }
+            }
+            if (!deletedScale.isPresent()) { System.out.println("Trayecto eliminado exitosamente"); }
+            System.out.println("Desea eliminar otro trayecto? si/ENTER");
             rta = sc.nextLine();
         }
     }
@@ -187,7 +240,7 @@ public class TripsConsoleAdapter {
             | TRAYECTOS |
             -------------
             """;
-        String[] menu = {"Asignar tripulación a trayecto","Asignar aeronave a trayecto", "Consultar Asignación de Tripulación","Consultar trayecto", "Actualizar trayecto" ,"Eliminar trayecto","Salir"};
+        String[] menu = {"Asignar tripulación a trayecto","Asignar aeronave a trayecto", "Consultar asignación de tripulación", "Consultar escala", "Actualizar escala","Eiminar escala","Consultar trayecto", "Actualizar trayecto" ,"Eliminar trayecto","Salir"};
         
         String errMessage = "El dato ingresado es incorrecto, intentelo de nuevo ";
         
@@ -220,15 +273,21 @@ public class TripsConsoleAdapter {
                     consultarEscala(header, errMessage, sc, rta);
                     break;
                 case 5:
+                    actualizarEscala(header, errMessage, sc, rta);
+                    break;
+                case 6:
+                    eliminarEscala(header, errMessage, sc, rta);
+                    break;
+                case 7:
                     consultarTrayecto(header, errMessage, sc, rta);
                     break;                   
-                case 6:
+                case 8:
                     actualizarTrayecto(header, errMessage, sc, rta);
                     break;       
-                case 7:
+                case 9:
                     eliminarTrayecto(header, errMessage, sc, rta);
                     break;       
-                case 8:    
+                case 10:    
                     isActive = false;     
                     break; 
                 default:

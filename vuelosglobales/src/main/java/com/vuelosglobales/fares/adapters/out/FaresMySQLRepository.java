@@ -24,6 +24,24 @@ public class FaresMySQLRepository implements FaresRepository {
     }
 
     @Override
+    public int getLastId() {
+        try (Connection connection = DriverManager.getConnection(url, user, password)){
+            String query = "SELECT MAX(id) AS max_id FROM flight_fares";
+            try (PreparedStatement statement = connection.prepareStatement(query)){
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if(resultSet.next()){
+                        int maxId = resultSet.getInt("max_id");
+                        return maxId;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } 
+        return -1;
+    }
+
+    @Override
     public void save (Fares flightFare){
         try (Connection connection = DriverManager.getConnection(url, user, password)){
             String query = "INSERT INTO flight_fares (description, details, value) VALUES (?,?,?)";
@@ -81,8 +99,13 @@ public class FaresMySQLRepository implements FaresRepository {
     @Override
     public void delete(int id){
         try (Connection connection = DriverManager.getConnection(url, user, password)){
-            String query = "DELETE FROM flight_fares WHERE id = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)){
+            String query2 = "DELETE FROM flight_fares WHERE id = ?";
+            String query1 = "UPDATE trip_booking_details SET id_fares = NULL WHERE id_fares = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query1)){
+                statement.setInt(1, id);
+                statement.executeUpdate();
+            }
+            try (PreparedStatement statement = connection.prepareStatement(query2)){
                 statement.setInt(1, id);
                 statement.executeUpdate();
             }
@@ -114,6 +137,24 @@ public class FaresMySQLRepository implements FaresRepository {
             e.printStackTrace();
         }
         return flightFares;
+    }
+
+    @Override
+    public List<String> getTableValues(String tableName) {
+        List<String> values = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT id, description, value FROM " + tableName;
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String value = "[id=" + resultSet.getInt("id") + ", details=" + resultSet.getString("description") + ", value" + resultSet.getString("value") +"]";
+                        values.add(value);
+                    }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return values;
     }
 
     @Override

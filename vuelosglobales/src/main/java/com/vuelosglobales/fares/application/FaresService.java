@@ -8,33 +8,41 @@ import com.vuelosglobales.fares.infraestructure.FaresRepository;
 import java.util.List;
 
 public class FaresService {
-    private final FaresRepository flightFareRepository;
+    private final FaresRepository faresRepository;
 
     public FaresService(FaresRepository flightFareRepository) {
-        this.flightFareRepository = flightFareRepository;
+        this.faresRepository = flightFareRepository;
     }
 
-    public void createFlightFare(Fares flightFare){
-        flightFareRepository.save(flightFare);
+    public int getLastId(){
+        return faresRepository.getLastId();
     }
 
-    public void updateFlightFare(Fares flightFare){
-        flightFareRepository.update(flightFare);
+    public void createFare(Fares flightFare){
+        faresRepository.save(flightFare);
     }
 
-    public void deleteFlightFare(int id) {
-        flightFareRepository.delete(id);
+    public void updateFare(Fares flightFare){
+        faresRepository.update(flightFare);
     }
 
-    public Optional<Fares> getFlightFareById(int id){
-        return flightFareRepository.findById(id);
+    public void deleteFare(int id) {
+        faresRepository.delete(id);
     }
 
-    public List<Fares> getAllFlightFares(){
-        return flightFareRepository.findAll();
+    public Optional<Fares> getFareById(int id){
+        return faresRepository.findById(id);
+    }
+
+    public List<Fares> getAllFares(){
+        return faresRepository.findAll();
+    }
+
+    public List<String> getAllValues(String tableName) {
+        return faresRepository.getTableValues(tableName);
     }
 
     public List<Integer> getIDs(String tableName) {
-        return flightFareRepository.getIDs(tableName);
+        return faresRepository.getIDs(tableName);
     }
 }

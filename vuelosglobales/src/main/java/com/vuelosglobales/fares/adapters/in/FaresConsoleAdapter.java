@@ -10,14 +10,22 @@ import com.vuelosglobales.fares.application.FaresService;
 import com.vuelosglobales.fares.domain.models.Fares;
 
 public class FaresConsoleAdapter {
-    private final FaresService flightFareService;
+    private final FaresService faresService;
 
     public FaresConsoleAdapter(FaresService flightFareService) {
-        this.flightFareService = flightFareService;
+        this.faresService = flightFareService;
+    }
+
+    public void printAllValues(String tableName){
+        List<String> valuesList = faresService.getAllValues(tableName);
+        for (String value : valuesList) {
+            System.out.println(value);
+        }
     }
 
     public int existsId(String txt, String errMessage1, String errMessage2, Scanner sc, String tableName){
-        List<Integer> IDsLsit = flightFareService.getIDs(tableName);
+        List<Integer> IDsLsit = faresService.getIDs(tableName);
+        printAllValues(tableName);
         int fId;
         do {
             fId = Main.validInt(sc, errMessage1, txt);
@@ -30,17 +38,16 @@ public class FaresConsoleAdapter {
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
-            System.out.println("Ingrese la descripción de la tarifa: ");
+            int id = faresService.getLastId() + 1;
+            System.out.print("\nIngrese la descripción de la tarifa: ");
             String description = sc.nextLine();
-            System.out.println("Ingrese el detalle de la tarifa: ");
+            System.out.println("\nIngrese los detalles de la tarifa: \n");
             String details = sc.nextLine();
-            Double value = Main.validDouble(sc, errMessage, "Ingrese el valor de la tarifa");
-            int id = 0; // Reevaluar valor del id
-            id =+1;
-            Fares newFlightFare = new Fares(id, description, details, value);
-            flightFareService.createFlightFare(newFlightFare);
-            Optional<Fares> createdFlightFare = flightFareService.getFlightFareById(id);
-            createdFlightFare.ifPresentOrElse(fF -> System.out.println("\nLa tarifa de vuelo: " + fF.toString() + " fue registrado correctamente.") , () -> System.out.println("[¡] Error al crear la tarifa de vuelo"));
+            int price = Main.validInt(sc, errMessage, "\nIngrese el valor de la tarifa: ");
+            Fares newFlightFare = new Fares(id, description, details, price);
+            faresService.createFare(newFlightFare);
+            Optional<Fares> createdFlightFare = faresService.getFareById(id);
+            createdFlightFare.ifPresentOrElse(f -> System.out.println("\nLa tarifa de vuelo: " + f.toString() + " fue registrada correctamente.") , () -> System.out.println("La tarifa no fue registrada correctamente"));
             System.out.println("\n¿Desea ingresar otra tarifa de vuelo? si/ENTER");
             rta = sc.nextLine();
         }
@@ -51,21 +58,21 @@ public class FaresConsoleAdapter {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tarifas de vuelo:\n");
-            int id = existsId("\nIngrese el id de la tarifa de vuelo a actualizar", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
-            Optional<Fares> selectedFlightFare = flightFareService.getFlightFareById(id);
+            int id = existsId("\nIngrese el id de la tarifa de vuelo a actualizar: ", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
+            Optional<Fares> selectedFlightFare = faresService.getFareById(id);
             if(selectedFlightFare.isPresent()){
                 System.out.println("\nTarifa de vuelo seleccionada:\n" + selectedFlightFare.get().toString());
-                System.out.println("\nIngrese la nueva descripción de la tarifa");
+                System.out.print("\nIngrese la nueva descripción de la tarifa: ");
                 String description = sc.nextLine();
-                System.out.println("\nIngrese el nuevo detalle de la tarifa");
-                String detail = sc.nextLine();
-                Double value = Main.validDouble(sc, errMessage, "Ingrese el nuevo valor de la tarifa");
-                Fares flightFareToUpdate = new Fares(id, description, detail, value);
-                flightFareService.updateFlightFare(flightFareToUpdate);
+                System.out.println("\nIngrese los nuevos detalles de la tarifa: \n");
+                String details = sc.nextLine();
+                int price = Main.validInt(sc, errMessage, "\nIngrese nuevo el valor de la tarifa: ");
+                Fares flightFareToUpdate = new Fares(id, description, details, price);
+                faresService.updateFare(flightFareToUpdate);
             }
-            Optional<Fares> updatedFlightFare = flightFareService.getFlightFareById(id);
-            updatedFlightFare.ifPresentOrElse(fF -> System.out.println("\nLa tarifa: " + fF.toString() + " fue actualizada correctamente."), 
-            () -> System.out.println("[¡] Error al actualizar tarifa de vuelo"));
+            Optional<Fares> updatedFare = faresService.getFareById(id);
+            updatedFare.ifPresentOrElse(f -> System.out.println("\nLa tarifa: " + f.toString() + " fue actualizada correctamente."), 
+            () -> System.out.println("La tarifa de vuelo no fue actualizada correctamente"));
             System.out.println("\n¿Desea actulizar otra tarifa de vuelo? si/ENTER");
             rta = sc.nextLine();
         }
@@ -77,8 +84,8 @@ public class FaresConsoleAdapter {
             System.out.println(header);
             System.out.println("Tarifas de vuelo:\n");
             int id = existsId("\nIngrese el id de la tarifa de vuelo a consultar: ", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
-            Optional<Fares> selectedFlightFare = flightFareService.getFlightFareById(id);
-            selectedFlightFare.ifPresentOrElse(fF -> System.out.println(selectedFlightFare.get().toString()),
+            Optional<Fares> selectedFare = faresService.getFareById(id);
+            selectedFare.ifPresentOrElse(f -> System.out.println(selectedFare.get().toString()),
             () -> System.out.println("\nTarifa de vuelo no encontrada"));
             System.out.println("\n¿Desea consultar otra tarifa de vuelo? si/ENTER");
             rta = sc.nextLine();
@@ -90,19 +97,19 @@ public class FaresConsoleAdapter {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tarifas de vuelo:\n");
-            int id = existsId("\nIngrese la tarifa de vuelo a eliminar", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
-            Optional<Fares> selectedFlightFare = flightFareService.getFlightFareById(id);
+            int id = existsId("\nIngrese el id de la tarifa de vuelo a eliminar: ", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
+            Optional<Fares> selectedFlightFare = faresService.getFareById(id);
             if (selectedFlightFare.isPresent()){
                 System.out.println(MessageFormat.format("\nLa tarifa de vuelo {0} será eliminada", selectedFlightFare.get().toString()));
                 System.out.println("\n¿Desea continuar? \npresione ENTER para si o cualquier tecla para no");
                 String choice = sc.nextLine();
                 if (choice.isEmpty()) {
-                    flightFareService.deleteFlightFare(id);
+                    faresService.deleteFare(id);
                 } else {
                     System.out.println("La tarifa de vuelo no ha sido eliminada");
                 }
             }
-            Optional<Fares> deletedFlightFare = flightFareService.getFlightFareById(id);
+            Optional<Fares> deletedFlightFare = faresService.getFareById(id);
             if(!deletedFlightFare.isPresent()) {System.out.println("La tarifa de vuelo ha sido eliminada exitosamente");}
             System.out.println("¿Desea eliminar otra tarifa de vuelo? si/ENTER");
             rta = sc.nextLine();

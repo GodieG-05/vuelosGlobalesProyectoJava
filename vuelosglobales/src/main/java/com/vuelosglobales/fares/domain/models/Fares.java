@@ -40,12 +40,9 @@ public class Fares {
     public void setValue(double value) {
         this.value = value;
     }
-    
     @Override
     public String toString() {
-        return "id: " + id + ", descrition: " + descrition + ", details:" + details + ", value: " + value;
+        return "[id=" + id + ", descrition=" + descrition + ", details=" + details + ", value=" + value + "]";
     }
 
-
-    
 }

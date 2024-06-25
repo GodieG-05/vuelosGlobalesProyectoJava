@@ -171,7 +171,7 @@ public class PlaneMySQLRepository implements PlaneRepository{
                             case "planes":
                                 int idPlane = resultSet.getInt("id");
                                 String plates = resultSet.getString("plates");
-                                value = "[id=" + idPlane + ", name=" + plates + "]";
+                                value = "[id=" + idPlane + ", plates=" + plates + "]";
                                 break;
                             default:
                                 int id = resultSet.getInt("id");

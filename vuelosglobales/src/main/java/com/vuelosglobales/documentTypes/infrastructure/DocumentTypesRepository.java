@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.vuelosglobales.documentTypes.domain.models.DocumentTypes;
 
-public interface BookingsRepository {
+public interface DocumentTypesRepository {
     int getLastId();
     void save(DocumentTypes documentTypes);
     void update(DocumentTypes documentTypes);

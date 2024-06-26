@@ -21,10 +21,7 @@ import com.vuelosglobales.trips.adapters.out.TripsMySQLRepository;
 import com.vuelosglobales.trips.application.TripsService;
 
 public class Agent {
-    public void start() {
-        String url = "jdbc:mysql://localhost:3306/travel_agency";
-        String user = "campus2023";
-        String password = "campus2023";
+    public void start(String url, String user, String password) {
 
         BookingsMySQLRepository bookingsMySQLRepository = new BookingsMySQLRepository(url, user, password);
         BookingsService bookingsService = new BookingsService(bookingsMySQLRepository);
@@ -111,6 +108,5 @@ public class Agent {
                     break;
             } 
         } 
-        sc.close();
     }
 }

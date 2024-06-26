@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import com.vuelosglobales.documentTypes.domain.models.DocumentTypes;
-import com.vuelosglobales.documentTypes.infrastructure.BookingsRepository;
+import com.vuelosglobales.documentTypes.infrastructure.DocumentTypesRepository;
 
 
 public class DocumentTypesService {
-    private final BookingsRepository DocumentTypesReporitory;
+    private final DocumentTypesRepository DocumentTypesReporitory;
 
-    public DocumentTypesService(BookingsRepository DocumentTypesReporitory){
+    public DocumentTypesService(DocumentTypesRepository DocumentTypesReporitory){
         this.DocumentTypesReporitory = DocumentTypesReporitory; 
     }
     

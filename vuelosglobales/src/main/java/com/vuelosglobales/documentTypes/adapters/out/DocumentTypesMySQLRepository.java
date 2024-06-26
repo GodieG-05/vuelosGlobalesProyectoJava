@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.vuelosglobales.documentTypes.domain.models.DocumentTypes;
-import com.vuelosglobales.documentTypes.infrastructure.BookingsRepository;
+import com.vuelosglobales.documentTypes.infrastructure.DocumentTypesRepository;
 
-public class DocumentTypesMySQLRepository implements BookingsRepository{
+public class DocumentTypesMySQLRepository implements DocumentTypesRepository{
     private final String url;
     private final String user;
     private final String password;
@@ -23,6 +23,7 @@ public class DocumentTypesMySQLRepository implements BookingsRepository{
         this.password = password;
     }
 
+    
     @Override
     public int getLastId(){
         try (Connection connection = DriverManager.getConnection(url, user, password)){
@@ -148,6 +149,7 @@ public class DocumentTypesMySQLRepository implements BookingsRepository{
         }
         return values;
     }
+
     @Override
     public List<Integer> getIDs(String tableName) {
         List<Integer> IDsLsit = new ArrayList<>();

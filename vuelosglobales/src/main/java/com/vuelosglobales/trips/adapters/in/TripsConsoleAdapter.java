@@ -28,9 +28,9 @@ public class TripsConsoleAdapter {
     }
 
     public Object existsId(String txt, String errMessage1, String errMessage2, Scanner sc, Boolean returnInt, String tableName){
+        List<Object> IDsLsit = tripsService.getIDs(tableName);
         printAllValues(tableName);
         if (returnInt) {
-            List<Object> IDsLsit = tripsService.getIDs(tableName);
             int fId;
             do {
                 fId = Main.validInt(sc, errMessage1, txt);
@@ -38,7 +38,6 @@ public class TripsConsoleAdapter {
             } while (!IDsLsit.contains(fId));
             return fId;
         } else {
-            List<Object> IDsLsit = tripsService.getIDs(tableName);
             String fId;
             do {
                 System.out.print(txt);

@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.vuelosglobales.documentTypes.domain.models.DocumentTypes;
-import com.vuelosglobales.documentTypes.infrastructure.DocumentTypesReporitory;
+import com.vuelosglobales.documentTypes.infrastructure.BookingsRepository;
 
-public class DocumentTypesMySQLRepository implements DocumentTypesReporitory{
+public class DocumentTypesMySQLRepository implements BookingsRepository{
     private final String url;
     private final String user;
     private final String password;
@@ -110,23 +110,23 @@ public class DocumentTypesMySQLRepository implements DocumentTypesReporitory{
 
     @Override
     public List<DocumentTypes> findAll() {
-        List<DocumentTypes> documentType = new ArrayList<>();
+        List<DocumentTypes> documentTypesList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             String query = "SELECT * FROM document_types";
             try (PreparedStatement statement = connection.prepareStatement(query); 
                  ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    DocumentTypes airport = new DocumentTypes(
+                    DocumentTypes documentType = new DocumentTypes(
                         resultSet.getInt("id"),
                         resultSet.getString("name")
                     );
-                    documentType.add(airport);
+                    documentTypesList.add(documentType);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return documentType;
+        return documentTypesList;
     }
 
     @Override

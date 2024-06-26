@@ -4,9 +4,16 @@ import java.sql.Date;
 import java.util.Optional;
 import java.util.Scanner;
 
-import com.vuelosglobales.fares.adapters.in.FaresConsoleAdapter;
-import com.vuelosglobales.fares.adapters.out.FaresMySQLRepository;
-import com.vuelosglobales.fares.application.FaresService;
+import com.vuelosglobales.customers.adapters.in.CustomersConsoleAdapter;
+import com.vuelosglobales.customers.adapters.out.CustomersMySQLRepository;
+import com.vuelosglobales.customers.application.CustomersService;
+
+// import com.vuelosglobales.bookings.adapters.in.BookingsConsoleAdapter;
+// import com.vuelosglobales.bookings.adapters.out.BookingsMySQLRepository;
+// import com.vuelosglobales.bookings.application.BookingsService;
+// import com.vuelosglobales.fares.adapters.in.FaresConsoleAdapter;
+// import com.vuelosglobales.fares.adapters.out.FaresMySQLRepository;
+// import com.vuelosglobales.fares.application.FaresService;
 // import com.vuelosglobales.airports.adapters.in.AirportsConsoleAdapter;
 // import com.vuelosglobales.airports.adapters.out.AirportsMySQLRepository;
 // import com.vuelosglobales.airports.application.AirportsService;
@@ -19,7 +26,6 @@ import com.vuelosglobales.fares.application.FaresService;
 // import com.vuelosglobales.trips.adapters.in.TripsConsoleAdapter;
 // import com.vuelosglobales.trips.adapters.out.TripsMySQLRepository;
 // import com.vuelosglobales.trips.application.TripsService;
-
 
 public class Main {
     // Codigo para limipiar consola
@@ -54,7 +60,7 @@ public class Main {
     public static Date validDate(Scanner sc, String errMesage, String txt){
         Optional<Date> x;
         do {
-            System.out.println(txt);
+            System.out.print(txt);
             try {
                 x = Optional.of(Date.valueOf(sc.nextLine()));
             } catch (IllegalArgumentException e) {
@@ -82,9 +88,17 @@ public class Main {
         // TripsService tripsService = new TripsService(tripsMySQLRepository);
         // TripsConsoleAdapter tripsConsoleAdapter = new TripsConsoleAdapter(tripsService);
         // tripsConsoleAdapter.start();
-        FaresMySQLRepository faresMySQLRepository = new FaresMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "campus2023", "campus2023");
-        FaresService faresService = new FaresService(faresMySQLRepository);
-        FaresConsoleAdapter faresConsoleAdapter = new FaresConsoleAdapter(faresService);
-        faresConsoleAdapter.start();
+        // FaresMySQLRepository faresMySQLRepository = new FaresMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
+        // FaresService faresService = new FaresService(faresMySQLRepository);
+        // FaresConsoleAdapter faresConsoleAdapter = new FaresConsoleAdapter(faresService);
+        // faresConsoleAdapter.start();
+        // BookingsMySQLRepository bookingsMySQLRepository = new BookingsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
+        // BookingsService bookingsService = new BookingsService(bookingsMySQLRepository);
+        // BookingsConsoleAdapter bookingsConsoleAdapter = new BookingsConsoleAdapter(bookingsService);
+        // bookingsConsoleAdapter.start();
+        CustomersMySQLRepository customersMySQLRepository = new CustomersMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
+        CustomersService customersService = new CustomersService(customersMySQLRepository);
+        CustomersConsoleAdapter customersConsoleAdapter = new CustomersConsoleAdapter(customersService);
+        customersConsoleAdapter.start();
     }
 }

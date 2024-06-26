@@ -12,10 +12,6 @@ import java.util.Optional;
 import com.vuelosglobales.planes.domain.models.Plane;
 import com.vuelosglobales.planes.infraestructure.PlaneRepository;
 
-
-//falta importar
-
-
 public class PlaneMySQLRepository implements PlaneRepository{
     private final String url;
     private final String user;
@@ -26,8 +22,6 @@ public class PlaneMySQLRepository implements PlaneRepository{
         this.user = user;
         this.password = password;
     }
-
-    
 
     @Override
     public int getLastId() {
@@ -187,7 +181,7 @@ public class PlaneMySQLRepository implements PlaneRepository{
         }
         return values;
     }
-    
+
     @Override
     public List<Integer> getIDs(String tableName) {
         List<Integer> IDsLsit = new ArrayList<>();

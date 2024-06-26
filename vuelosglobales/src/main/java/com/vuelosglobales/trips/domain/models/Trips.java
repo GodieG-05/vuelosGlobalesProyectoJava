@@ -3,9 +3,9 @@ package com.vuelosglobales.trips.domain.models;
 import java.sql.Date;
 
 public class Trips {
-    int id;
-    Date tripDate;
-    double priceTrip;
+    private int id;
+    private Date tripDate;
+    private double priceTrip;
     
     public Trips(int id, Date tripDate, double priceTrip) {
         this.id = id;

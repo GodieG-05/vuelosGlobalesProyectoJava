@@ -6,14 +6,14 @@ import java.util.Optional;
 import java.util.Scanner;
 
 import com.vuelosglobales.Main;
-import com.vuelosglobales.documentTypes.application.DocumentTypesService;
+import com.vuelosglobales.documentTypes.application.BookingsService;
 import com.vuelosglobales.documentTypes.domain.models.DocumentTypes;
 
 public class DocumentTypesConsoleAdapter {
 
-    private DocumentTypesService documentTypesService;
+    private BookingsService documentTypesService;
 
-    public DocumentTypesConsoleAdapter(DocumentTypesService documentTypesService){
+    public DocumentTypesConsoleAdapter(BookingsService documentTypesService){
         this.documentTypesService = documentTypesService;
     }
 

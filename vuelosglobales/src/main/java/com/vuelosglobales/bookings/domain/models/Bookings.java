@@ -37,4 +37,10 @@ public class Bookings {
         this.idTrip = idTrip;
     }
 
+    @Override
+    public String toString() {
+        return "[id=" + id + ", date=" + date + ", idTrip=" + idTrip + "]";
+    }
+
 }
+ 

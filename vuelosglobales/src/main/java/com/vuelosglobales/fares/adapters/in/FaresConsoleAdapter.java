@@ -16,6 +16,15 @@ public class FaresConsoleAdapter {
         this.faresService = flightFareService;
     }
 
+    String header = """
+        --------------------
+        | Tarifas de Vuelo |
+        --------------------
+        """;
+    String errMessage = "El dato ingresado es incorrecto, intentelo de nuevo ";
+    Scanner sc = new Scanner(System.in);
+    String rta = " ";
+
     public void printAllValues(String tableName){
         List<String> valuesList = faresService.getAllValues(tableName);
         for (String value : valuesList) {
@@ -23,18 +32,18 @@ public class FaresConsoleAdapter {
         }
     }
 
-    public int existsId(String txt, String errMessage1, String errMessage2, Scanner sc, String tableName){
+    public int existsId(String txt, String errMessage2, String tableName){
         List<Integer> IDsLsit = faresService.getIDs(tableName);
         printAllValues(tableName);
         int fId;
         do {
-            fId = Main.validInt(sc, errMessage1, txt);
+            fId = Main.validInt(sc, errMessage, txt);
             if (!IDsLsit.contains(fId)) { System.out.println(errMessage2); }
         } while (!IDsLsit.contains(fId));
         return fId;
     }
 
-    public void registrarTarifa(String header, String errMessage, Scanner sc, String rta){
+    public void registrarTarifa(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
@@ -53,12 +62,12 @@ public class FaresConsoleAdapter {
         }
     }
 
-    public void actualizarTarifa(String header, String errMessage, Scanner sc, String rta){
+    public void actualizarTarifa(){
         while (!rta.isEmpty()){
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tarifas de vuelo:\n");
-            int id = existsId("\nIngrese el id de la tarifa de vuelo a actualizar: ", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
+            int id = existsId("\nIngrese el id de la tarifa de vuelo a actualizar: ", "\nTarifa de vuelo no encontrada, Intente de nuevo", "flight_fares");
             Optional<Fares> selectedFlightFare = faresService.getFareById(id);
             if(selectedFlightFare.isPresent()){
                 System.out.println("\nTarifa de vuelo seleccionada:\n" + selectedFlightFare.get().toString());
@@ -78,12 +87,12 @@ public class FaresConsoleAdapter {
         }
     }
 
-    public void consultarTarifa(String header, String errMessage, Scanner sc, String rta){
+    public void consultarTarifa(){
         while (!rta.isEmpty()){
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tarifas de vuelo:\n");
-            int id = existsId("\nIngrese el id de la tarifa de vuelo a consultar: ", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
+            int id = existsId("\nIngrese el id de la tarifa de vuelo a consultar: ", "\nTarifa de vuelo no encontrada, Intente de nuevo", "flight_fares");
             Optional<Fares> selectedFare = faresService.getFareById(id);
             selectedFare.ifPresentOrElse(f -> System.out.println(selectedFare.get().toString()),
             () -> System.out.println("\nTarifa de vuelo no encontrada"));
@@ -92,12 +101,12 @@ public class FaresConsoleAdapter {
         }
     }
 
-    public void eliminarTarifa(String header, String errMessage, Scanner sc, String rta){
+    public void eliminarTarifa(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tarifas de vuelo:\n");
-            int id = existsId("\nIngrese el id de la tarifa de vuelo a eliminar: ", errMessage, "\nTarifa de vuelo no encontrada, Intente de nuevo", sc, "flight_fares");
+            int id = existsId("\nIngrese el id de la tarifa de vuelo a eliminar: ", "\nTarifa de vuelo no encontrada, Intente de nuevo", "flight_fares");
             Optional<Fares> selectedFlightFare = faresService.getFareById(id);
             if (selectedFlightFare.isPresent()){
                 System.out.println(MessageFormat.format("\nLa tarifa de vuelo {0} será eliminada", selectedFlightFare.get().toString()));
@@ -118,16 +127,9 @@ public class FaresConsoleAdapter {
 
     public void start() {
         
-        String header = """
-            --------------------
-            | Tarifas de Vuelo |
-            --------------------
-            """;
+
         String[] menu = {"Registrar Tarifa","Actualizar Tarifa","Consultar Tarifa","Eliminar Tarifa","Salir"};
         
-        String errMessage = "El dato ingresado es incorrecto, intentelo de nuevo ";
-        
-        Scanner sc = new Scanner(System.in);
         boolean isActive = true;
         mainLoop:
         while (isActive) {
@@ -144,16 +146,16 @@ public class FaresConsoleAdapter {
 
             switch (op) {
                 case 1:
-                    registrarTarifa(header, errMessage, sc, errMessage);
+                    registrarTarifa();
                     break;
                 case 2:
-                    actualizarTarifa(header, errMessage, sc, errMessage);
+                    actualizarTarifa();
                     break;      
                 case 3:
-                    consultarTarifa(header, errMessage, sc, errMessage);
+                    consultarTarifa();
                     break;                   
                 case 4:
-                    eliminarTarifa(header, errMessage, sc, errMessage);
+                    eliminarTarifa();
                     break;       
                 case 5:    
                     isActive = false;     
@@ -164,8 +166,5 @@ public class FaresConsoleAdapter {
                     break;
             } 
         } 
-        sc.close();
-    }
-
-    
+    }    
 }

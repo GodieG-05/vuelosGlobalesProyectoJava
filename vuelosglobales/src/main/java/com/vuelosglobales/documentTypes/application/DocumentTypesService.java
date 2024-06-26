@@ -7,10 +7,10 @@ import com.vuelosglobales.documentTypes.domain.models.DocumentTypes;
 import com.vuelosglobales.documentTypes.infrastructure.BookingsRepository;
 
 
-public class BookingsService {
+public class DocumentTypesService {
     private final BookingsRepository DocumentTypesReporitory;
 
-    public BookingsService(BookingsRepository DocumentTypesReporitory){
+    public DocumentTypesService(BookingsRepository DocumentTypesReporitory){
         this.DocumentTypesReporitory = DocumentTypesReporitory; 
     }
     

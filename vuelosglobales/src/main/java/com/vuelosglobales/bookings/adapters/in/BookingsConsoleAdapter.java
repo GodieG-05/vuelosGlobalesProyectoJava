@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
-// import java.util.Optional;
 import java.util.Scanner;
 
 import com.vuelosglobales.Main;
@@ -17,6 +16,15 @@ public class BookingsConsoleAdapter {
     public BookingsConsoleAdapter(BookingsService bookingsService){
         this.bookingsService = bookingsService;
     }
+
+    String header = """
+            ------------
+            | RESERVAS |
+            ------------
+            """;
+    Scanner sc = new Scanner(System.in);
+    String errMessage = "[¡]ERROR: El dato ingresado es incorrecto, intentelo de nuevo ";
+    String rta = " ";
 
     public void printAllValues(String tableName){
         List<String> valuesList = bookingsService.getAllValues(tableName);
@@ -38,7 +46,7 @@ public class BookingsConsoleAdapter {
         return fId;
     }
 
-    public void registrarReserva(String header, String errMessage ,Scanner sc, String rta){
+    public void registrarReserva(){
         while (!rta.isEmpty()) {            
             Main.clearScreen();
             System.out.println(header);
@@ -56,7 +64,7 @@ public class BookingsConsoleAdapter {
         }
     }
 
-    public void consultarReserva(String header, String errMessage, Scanner sc, String rta){
+    public void consultarReserva(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
@@ -69,7 +77,7 @@ public class BookingsConsoleAdapter {
         }
     }
 
-    public void elimninarReserva(String header, String errMessage, Scanner sc, String rta){
+    public void eliminarReserva(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
@@ -88,12 +96,12 @@ public class BookingsConsoleAdapter {
             }
             Optional<Bookings> deletedBooking = bookingsService.getBookingById(id);
             if (deletedBooking.isEmpty()) { System.out.println("Reserva eliminada exitosamente"); }
-            System.out.println("Desea eliminar otro tipo de documento? si/ENTER");
+            System.out.println("Desea eliminar otra reserva? si/ENTER");
             rta = sc.nextLine();
         }
     }
 
-    public void consultarVuelo(String header, String errMessage, Scanner sc, String rta){
+    public void consultarVuelo(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
@@ -105,56 +113,4 @@ public class BookingsConsoleAdapter {
             rta = sc.nextLine();
         }
     }
-
-    public void start() {
-        
-        String header = """
-            ------------
-            | RESERVAS |
-            ------------
-            """;
-        String[] menu = {"Registrar reservas","Consultar reservas","Eliminar reservas","Consultar informacion de vuelo","Salir"};
-        
-        String errMessage = "[¡]ERROR: El dato ingresado es incorrecto, intentelo de nuevo ";
-        
-        Scanner sc = new Scanner(System.in);
-        boolean isActive = true;
-        mainLoop:
-        while (isActive) {
-            Main.clearScreen();
-            System.out.println(header);
-            
-            for (int i = 0; i < menu.length; i++) {
-                System.out.println(MessageFormat.format("{0}. {1}.", (i+1), menu[i]));
-            }
-            int op = Main.validInt(sc, errMessage, "-> ");
-            if(op == -1){
-                continue mainLoop;
-            }
-            String rta = " ";
-            switch (op) {
-                case 1:
-                    registrarReserva(header, errMessage, sc, rta);
-                    break;
-                case 2:
-                    consultarReserva(header, errMessage, sc, rta);
-                    break;
-                    case 3:
-                    elimninarReserva(header, errMessage, sc, rta);
-                    break;                   
-                case 4:
-                    consultarVuelo(header, errMessage, sc, rta);
-                    break;       
-                case 5:    
-                    isActive = false;     
-                    break; 
-                default:
-                    System.out.println(errMessage);
-                    sc.nextLine();
-                    break;
-            } 
-        } 
-        sc.close();
-    }
 }
- 

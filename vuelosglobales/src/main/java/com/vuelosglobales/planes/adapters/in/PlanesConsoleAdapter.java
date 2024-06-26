@@ -18,6 +18,15 @@ public class PlanesConsoleAdapter {
         this.planeService = planeService;
     }
 
+    String header = """
+        -----------
+        | AVIONES |
+        -----------
+        """;
+    String errMessage = "El dato ingresado es incorrecto, intentelo de nuevo ";
+    Scanner sc = new Scanner(System.in);
+    String rta = " ";
+
     public void printAllValues(String tableName){
         List<String> valuesList = planeService.getAllValues(tableName);
         for (String value : valuesList) {
@@ -25,18 +34,18 @@ public class PlanesConsoleAdapter {
         }
     }
 
-    public int existsId(String txt, String errMessage1, String errMessage2, Scanner sc, String tableName){
+    public int existsId(String txt, String errMessage2, String tableName){
         List<Integer> IDsLsit = planeService.getIDs(tableName);
         printAllValues(tableName);
         int fId;
         do {
-            fId = Main.validInt(sc, errMessage1, txt);
+            fId = Main.validInt(sc, errMessage, txt);
             if (!IDsLsit.contains(fId)) { System.out.println(errMessage2); }
         } while (!IDsLsit.contains(fId));
         return fId;
     }
 
-    public void registrarAvion(String header, String errMessage, Scanner sc, String rta){
+    public void registrarAvion(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
@@ -46,9 +55,9 @@ public class PlanesConsoleAdapter {
             int capacity = Main.validInt(sc, errMessage, "Ingrese la capacidad del avion: ");
             Date date = Main.validDate(sc, errMessage, "Ingrese la fecha de fabricacion del avion en formato YYYY-MM-DD: ");
             System.out.println("\nEstados:\n");
-            int idStatus = existsId("\nIngrese el ID del estado del avion: ", errMessage, "Estado no encontrado, Intente de nuevo", sc, "statuses");
+            int idStatus = existsId("\nIngrese el ID del estado del avion: ", "Estado no encontrado, Intente de nuevo", "statuses");
             System.out.println("\nModelos:\n");
-            int idModel = existsId("\nIngrese el ID del modelo del avion: ", errMessage, "Modelo no encontrado, Intente de nuevo", sc, "models");
+            int idModel = existsId("\nIngrese el ID del modelo del avion: ", "Modelo no encontrado, Intente de nuevo", "models");
             Plane newPlane = new Plane(id, plates, capacity, date, idStatus, idModel);
             planeService.createPlane(newPlane);
             Optional<Plane> createdPlane = planeService.getPlaneById(id);
@@ -59,12 +68,12 @@ public class PlanesConsoleAdapter {
         }
     }
 
-    public void actualizarAvion(String header, String errMessage, Scanner sc, String rta){
+    public void actualizarAvion(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Aviones:\n");
-            int id = existsId("\nIngrese el id del avion a actualizar: ", errMessage, "\nAvion no encontrado, Intente de nuevo", sc, "planes");
+            int id = existsId("\nIngrese el id del avion a actualizar: ", "\nAvion no encontrado, Intente de nuevo", "planes");
             Optional<Plane> slectedPlane = planeService.getPlaneById(id);
             if(slectedPlane.isPresent()){
                 System.out.println("\nAvion seleccionado: \n" + slectedPlane.get().toString());
@@ -73,9 +82,9 @@ public class PlanesConsoleAdapter {
                 int capacity = Main.validInt(sc, errMessage, "Ingrese la nueva capacidad del avion: ");
                 Date date = Main.validDate(sc, errMessage, "Ingrese la nueva fecha de fabricacion del avion en formato YYYY-MM-DD: ");
                 System.out.println("\nEstados:\n");
-                int idStatus = existsId("\nIngrese el nuevo ID del estado del avion: ", errMessage, "Estado no encontrado, Intente de nuevo", sc, "statuses");
+                int idStatus = existsId("\nIngrese el nuevo ID del estado del avion: ", "Estado no encontrado, Intente de nuevo",  "statuses");
                 System.out.println("\nModelos:\n");
-                int idModel = existsId("\nIngrese el nuevo ID del modelo del avion: ", errMessage, "Modelo no encontrado, Intente de nuevo", sc, "models");
+                int idModel = existsId("\nIngrese el nuevo ID del modelo del avion: ", "Modelo no encontrado, Intente de nuevo", "models");
                 Plane planeToUpdate = new Plane(id, plates, capacity, date, idStatus, idModel);
                 planeService.updatePlane(planeToUpdate);
             }
@@ -87,12 +96,12 @@ public class PlanesConsoleAdapter {
         }
     }
 
-    public void consultarAvion(String header, String errMessage, Scanner sc, String rta){
+    public void consultarAvion(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Aviones:\n");
-            int id = existsId("\nIngrese el id del avion a consultar: ", errMessage, "\nAvion no encontrado, Intente de nuevo", sc, "planes");
+            int id = existsId("\nIngrese el id del avion a consultar: ", "\nAvion no encontrado, Intente de nuevo", "planes");
             Optional<Plane> selectedPlane = planeService.getPlaneById(id);
             if (selectedPlane.isPresent()) { System.out.println(selectedPlane.get().toString()); }
             System.out.println("\nDesea consultar otro avion? si/ENTER");
@@ -100,13 +109,12 @@ public class PlanesConsoleAdapter {
         }
     }
 
-    public void eliminarAvion(String header, String errMessage, Scanner sc, String rta){
+    public void eliminarAvion(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Aviones:\n");
-            int id = existsId("\nIngrese el id del avion a eliminar: ", errMessage,
-            "\nAvion no encontrado, Intente de nuevo", sc, "planes");
+            int id = existsId("\nIngrese el id del avion a eliminar: ", "\nAvion no encontrado, Intente de nuevo","planes");
             Optional<Plane> slectedPlane = planeService.getPlaneById(id);
             if (slectedPlane.isPresent()) {
                 System.out.println(MessageFormat.format("\nEl avion {0} será eliminado", slectedPlane.get().toString()));
@@ -125,17 +133,9 @@ public class PlanesConsoleAdapter {
         }
     }
     public void start() {
-        
-        String header = """
-            -----------
-            | AVIONES |
-            -----------
-            """;
+
         String[] menu = {"Registrar Avion","Actualizar Avion","Consultar Avion","Eliminar Avion","Salir"};
         
-        String errMessage = "El dato ingresado es incorrecto, intentelo de nuevo ";
-        
-        Scanner sc = new Scanner(System.in);
         boolean isActive = true;
         mainLoop:
         while (isActive) {
@@ -149,19 +149,18 @@ public class PlanesConsoleAdapter {
             if(op == -1){
                 continue mainLoop;
             }
-
             switch (op) {
                 case 1:
-                    registrarAvion(header, errMessage, sc, errMessage);
+                    registrarAvion();
                     break;
                 case 2:
-                    actualizarAvion(header, errMessage, sc, errMessage);
+                    actualizarAvion();
                     break;      
                 case 3:
-                    consultarAvion(header, errMessage, sc, errMessage);
+                    consultarAvion();
                     break;                   
                 case 4:
-                    eliminarAvion(header, errMessage, sc, errMessage);
+                    eliminarAvion();
                     break;       
                 case 5:    
                     isActive = false;     
@@ -172,6 +171,5 @@ public class PlanesConsoleAdapter {
                     break;
             } 
         } 
-        sc.close();
     }
 }

@@ -4,28 +4,8 @@ import java.sql.Date;
 import java.util.Optional;
 import java.util.Scanner;
 
-import com.vuelosglobales.customers.adapters.in.CustomersConsoleAdapter;
-import com.vuelosglobales.customers.adapters.out.CustomersMySQLRepository;
-import com.vuelosglobales.customers.application.CustomersService;
-
-// import com.vuelosglobales.bookings.adapters.in.BookingsConsoleAdapter;
-// import com.vuelosglobales.bookings.adapters.out.BookingsMySQLRepository;
-// import com.vuelosglobales.bookings.application.BookingsService;
-// import com.vuelosglobales.fares.adapters.in.FaresConsoleAdapter;
-// import com.vuelosglobales.fares.adapters.out.FaresMySQLRepository;
-// import com.vuelosglobales.fares.application.FaresService;
-// import com.vuelosglobales.airports.adapters.in.AirportsConsoleAdapter;
-// import com.vuelosglobales.airports.adapters.out.AirportsMySQLRepository;
-// import com.vuelosglobales.airports.application.AirportsService;
-// import com.vuelosglobales.documentTypes.adapters.in.DocumentTypesConsoleAdapter;
-// import com.vuelosglobales.documentTypes.adapters.out.DocumentTypesMySQLRepository;
-// import com.vuelosglobales.documentTypes.application.DocumentTypesService;
-// import com.vuelosglobales.planes.adapters.in.PlanesConsoleAdapter;
-// import com.vuelosglobales.planes.adapters.out.PlaneMySQLRepository;
-// import com.vuelosglobales.planes.application.PlaneService;
-// import com.vuelosglobales.trips.adapters.in.TripsConsoleAdapter;
-// import com.vuelosglobales.trips.adapters.out.TripsMySQLRepository;
-// import com.vuelosglobales.trips.application.TripsService;
+// import com.vuelosglobales.users.Admin;
+import com.vuelosglobales.users.Agent;
 
 public class Main {
     // Codigo para limipiar consola
@@ -72,33 +52,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // AirportsMySQLRepository airportsMySQLRepository = new AirportsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
-        // AirportsService airportsService = new AirportsService(airportsMySQLRepository);
-        // AirportsConsoleAdapter airportsConsoleAdapter = new AirportsConsoleAdapter(airportsService);
-        // airportsConsoleAdapter.start();
-        // DocumentTypesMySQLRepository documentTypesMySQLRepository = new DocumentTypesMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
-        // DocumentTypesService documentTypesService = new DocumentTypesService(documentTypesMySQLRepository);
-        // DocumentTypesConsoleAdapter documentTypesConsoleAdapter = new DocumentTypesConsoleAdapter(documentTypesService);
-        // documentTypesConsoleAdapter.start();
-        // PlaneMySQLRepository planeMySQLRepository = new PlaneMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
-        // PlaneService planeService = new PlaneService(planeMySQLRepository);
-        // PlanesConsoleAdapter planesConsoleAdapter = new PlanesConsoleAdapter(planeService);
-        // planesConsoleAdapter.start();
-        // TripsMySQLRepository tripsMySQLRepository = new TripsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
-        // TripsService tripsService = new TripsService(tripsMySQLRepository);
-        // TripsConsoleAdapter tripsConsoleAdapter = new TripsConsoleAdapter(tripsService);
-        // tripsConsoleAdapter.start();
-        // FaresMySQLRepository faresMySQLRepository = new FaresMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
-        // FaresService faresService = new FaresService(faresMySQLRepository);
-        // FaresConsoleAdapter faresConsoleAdapter = new FaresConsoleAdapter(faresService);
-        // faresConsoleAdapter.start();
-        // BookingsMySQLRepository bookingsMySQLRepository = new BookingsMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
-        // BookingsService bookingsService = new BookingsService(bookingsMySQLRepository);
-        // BookingsConsoleAdapter bookingsConsoleAdapter = new BookingsConsoleAdapter(bookingsService);
-        // bookingsConsoleAdapter.start();
-        CustomersMySQLRepository customersMySQLRepository = new CustomersMySQLRepository("jdbc:mysql://localhost:3306/travel_agency", "root", "12345");
-        CustomersService customersService = new CustomersService(customersMySQLRepository);
-        CustomersConsoleAdapter customersConsoleAdapter = new CustomersConsoleAdapter(customersService);
-        customersConsoleAdapter.start();
+        Agent agent = new Agent();
+        agent.start();
+        // Admin admin = new Admin();
+        // admin.start();
     }
 }

@@ -6,16 +6,25 @@ import java.util.Optional;
 import java.util.Scanner;
 
 import com.vuelosglobales.Main;
-import com.vuelosglobales.documentTypes.application.BookingsService;
+import com.vuelosglobales.documentTypes.application.DocumentTypesService;
 import com.vuelosglobales.documentTypes.domain.models.DocumentTypes;
 
 public class DocumentTypesConsoleAdapter {
 
-    private BookingsService documentTypesService;
+    private DocumentTypesService documentTypesService;
 
-    public DocumentTypesConsoleAdapter(BookingsService documentTypesService){
+    public DocumentTypesConsoleAdapter(DocumentTypesService documentTypesService){
         this.documentTypesService = documentTypesService;
     }
+
+    String header = """
+            ----------------------
+            | TIPOS DE DOCUMENTO |
+            ----------------------
+            """;
+    String errMessage = "[¡]ERROR: El dato ingresado es incorrecto, intentelo de nuevo ";
+    Scanner sc = new Scanner(System.in);
+    String rta = " ";
 
     public void printAllValues(String tableName){
         List<String> valuesList = documentTypesService.getAllValues(tableName);
@@ -24,12 +33,12 @@ public class DocumentTypesConsoleAdapter {
         }
     }
 
-    public int existsId(String txt, String errMessage1, String errMessage2, Scanner sc, String tableName){
+    public int existsId(String txt, String errMessage2, String tableName){
         List<Integer> IDsLsit = documentTypesService.getIDs(tableName);
         printAllValues(tableName);
         int fId;
         do {
-            fId = Main.validInt(sc, errMessage1, txt);
+            fId = Main.validInt(sc, errMessage, txt);
             if (!IDsLsit.contains(fId)) {
                 System.out.println(errMessage2);
             }
@@ -37,7 +46,7 @@ public class DocumentTypesConsoleAdapter {
         return fId;
     }
 
-    public void registrarTipoDocumento(String header, String errMessage ,Scanner sc, String rta){
+    public void registrarTipoDocumento(){
         while (!rta.isEmpty()) {            
             Main.clearScreen();
             System.out.println(header);
@@ -54,12 +63,12 @@ public class DocumentTypesConsoleAdapter {
         }
     }
 
-    public void actualizarTipoDocumento(String header, String errMessage, Scanner sc, String rta){
+    public void actualizarTipoDocumento(){
         while (!rta.isEmpty()) {            
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tipos de documento:\n");
-            int id = existsId("\nIngrese el id del tipo de documento a actualizar: ", errMessage, "\nTipo de documento no encontrado, Intente de nuevo", sc, "document_types");            
+            int id = existsId("\nIngrese el id del tipo de documento a actualizar: ", "\nTipo de documento no encontrado, Intente de nuevo", "document_types");            
             Optional<DocumentTypes> selectedDocumentType = documentTypesService.getDocumentTypesById(id);
             if(selectedDocumentType.isPresent()){
                 System.out.println("\nTipo de documento seleccionado: \n" + selectedDocumentType.get().toString());
@@ -78,12 +87,12 @@ public class DocumentTypesConsoleAdapter {
         }
     }
 
-    public void consultarTipoDocumento(String header, String errMessage, Scanner sc, String rta){
+    public void consultarTipoDocumento(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tipos de documento:\n");
-            int id = existsId("\nIngrese el id del tipo de documento a consultar: ", errMessage, "\nTipo de documento no encontrado, Intente de nuevo", sc, "document_types");             
+            int id = existsId("\nIngrese el id del tipo de documento a consultar: ", "\nTipo de documento no encontrado, Intente de nuevo", "document_types");             
             Optional<DocumentTypes> selectedDocumentType = documentTypesService.getDocumentTypesById(id);
             if (selectedDocumentType.isPresent()) { System.out.println(selectedDocumentType.get().toString()); }
             System.out.println("\nDesea consultar otro aeropuerto? si/ENTER");
@@ -91,12 +100,12 @@ public class DocumentTypesConsoleAdapter {
         }
     }
 
-    public void elimninarTipoDocumento(String header, String errMessage, Scanner sc, String rta){
+    public void elimninarTipoDocumento(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Tipos de documento:\n");
-            int id = existsId("\nIngrese el id del tipo de documento a eliminar: ", errMessage, "\nTipo de documento no encontrado, Intente de nuevo", sc, "document_types");
+            int id = existsId("\nIngrese el id del tipo de documento a eliminar: ", "\nTipo de documento no encontrado, Intente de nuevo", "document_types");
             Optional<DocumentTypes> documentType = documentTypesService.getDocumentTypesById(id);
             if(documentType.isPresent()){
                 System.out.println(MessageFormat.format("\nEl tipo de documento {0} será eliminado", documentType.get().toString()));
@@ -116,17 +125,7 @@ public class DocumentTypesConsoleAdapter {
     }
 
     public void start() {
-        
-        String header = """
-            ----------------------
-            | TIPOS DE DOCUMENTO |
-            ----------------------
-            """;
         String[] menu = {"Registrar tipos de documento","Actualizar tipos de documento","Consultar tipos de documento","Eliminar tipos de documento","Salir"};
-        
-        String errMessage = "[¡]ERROR: El dato ingresado es incorrecto, intentelo de nuevo ";
-        
-        Scanner sc = new Scanner(System.in);
         boolean isActive = true;
         mainLoop:
         while (isActive) {
@@ -140,29 +139,27 @@ public class DocumentTypesConsoleAdapter {
             if(op == -1){
                 continue mainLoop;
             }
-            String rta = " ";
             switch (op) {
                 case 1:
-                    registrarTipoDocumento(header, errMessage, sc, rta);
+                    registrarTipoDocumento();
                     break;
                 case 2:
-                    actualizarTipoDocumento(header, errMessage, sc, rta);
+                    actualizarTipoDocumento();
                     break;
                 case 3:
-                    consultarTipoDocumento(header, errMessage, sc, rta);
-                    break;                   
+                    consultarTipoDocumento();
+                    break;
                 case 4:
-                    elimninarTipoDocumento(header, errMessage, sc, rta);
-                    break;       
-                case 5:    
-                    isActive = false;     
-                    break; 
+                    elimninarTipoDocumento();
+                    break;
+                case 5:
+                    isActive = false;
+                    break;
                 default:
                     System.out.println(errMessage);
                     sc.nextLine();
                     break;
-            } 
+            }
         } 
-        sc.close();
     }
 }

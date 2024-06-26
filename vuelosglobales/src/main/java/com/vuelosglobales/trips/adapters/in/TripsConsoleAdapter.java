@@ -20,6 +20,15 @@ public class TripsConsoleAdapter {
         this.tripsService = tripsService;
     }
 
+    String header = """
+            -------------
+            | TRAYECTOS |
+            -------------
+            """;
+    String errMessage = "El dato ingresado es incorrecto, intentelo de nuevo ";
+    Scanner sc = new Scanner(System.in);
+    String rta = " ";
+
     public void printAllValues(String tableName){
         List<String> valuesList = tripsService.getAllValues(tableName);
         for (String value : valuesList) {
@@ -27,13 +36,13 @@ public class TripsConsoleAdapter {
         }
     }
 
-    public Object existsId(String txt, String errMessage1, String errMessage2, Scanner sc, Boolean returnInt, String tableName){
+    public Object existsId(String txt, String errMessage2, Boolean returnInt, String tableName){
         List<Object> IDsLsit = tripsService.getIDs(tableName);
         printAllValues(tableName);
         if (returnInt) {
             int fId;
             do {
-                fId = Main.validInt(sc, errMessage1, txt);
+                fId = Main.validInt(sc, errMessage, txt);
                 if (!IDsLsit.contains(fId)) { System.out.println(errMessage2); }
             } while (!IDsLsit.contains(fId));
             return fId;
@@ -48,15 +57,15 @@ public class TripsConsoleAdapter {
         }
     }
     
-    public void asignarTripulacion(String header, String errMessage, Scanner sc, String rta){
+    public void asignarTripulacion(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("\nTrayectos:");
-            Object idTrip = existsId("\nIngrese el id del trayecto: ", errMessage, 
-            "Trayecto no encontrada, Intente de nuevo", sc, true,"trips");
+            Object idTrip = existsId("\nIngrese el id del trayecto: ",
+            "Trayecto no encontrada, Intente de nuevo", true,"trips");
             System.out.println("\nEmpleados:");
-            Object idEmployee = existsId("\nIngrese el id del empleado a asignar: ", errMessage, "Empleado no encontrado, Intente de nuevo", sc, false, "employees");
+            Object idEmployee = existsId("\nIngrese el id del empleado a asignar: ", "Empleado no encontrado, Intente de nuevo", false, "employees");
             tripsService.assignX(idTrip, idEmployee, "employee");
             Optional<String> assignedEmployee = tripsService.getAssignations(idTrip, idEmployee, "employees");
             assignedEmployee.ifPresentOrElse(e -> System.out.println("\nLa asignacion: " + e.toString() + " fue realizada correctamente."), 
@@ -66,15 +75,15 @@ public class TripsConsoleAdapter {
         }
     }
 
-    public void asignarAvion (String header, String errMessage, Scanner sc, String rta){
+    public void asignarAvion (){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("\nTrayectos:");
-            Object idTrip = existsId("\nIngrese el id del trayecto: ", errMessage, 
-            "Trayecto no encontrada, Intente de nuevo", sc, true,"trips");
+            Object idTrip = existsId("\nIngrese el id del trayecto: ", 
+            "Trayecto no encontrada, Intente de nuevo", true,"trips");
             System.out.println("\nAviones:");
-            Object idPlane = existsId("\nIngrese el id del avion a asignar: ", errMessage, "Avion no encontrado, Intente de nuevo", sc, true,"planes");
+            Object idPlane = existsId("\nIngrese el id del avion a asignar: ", "Avion no encontrado, Intente de nuevo", true,"planes");
             tripsService.assignX(idTrip, idPlane, "planes");
             Optional<String> assignedPlane = tripsService.getAssignations(idTrip, idPlane, "planes");
             assignedPlane.ifPresentOrElse(e -> System.out.println("\nLa asignacion: " + e.toString() + " fue realizada correctamente."), 
@@ -84,12 +93,12 @@ public class TripsConsoleAdapter {
         }
     }
 
-    public void consultarAsignacion (String header, String errMessage, Scanner sc, String rta) {
+    public void consultarAsignacion () {
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Trayectos:\n");
-            Object id = existsId("\nIngrese el id del trayecto para consultar su tripulacion: ", errMessage, "\nTrayecto no encontrado, Intente de nuevo", sc, true, "trips");
+            Object id = existsId("\nIngrese el id del trayecto para consultar su tripulacion: ", "\nTrayecto no encontrado, Intente de nuevo", true, "trips");
             Optional<ArrayList<String>> tripulation = tripsService.getTripulation((Integer)id);
             if (tripulation.isPresent()) { 
                 System.out.println("\nTripulacion del trayecto:");
@@ -104,12 +113,12 @@ public class TripsConsoleAdapter {
         }
     }
 
-    public void consultarEscala (String header, String errMessage, Scanner sc, String rta) {
+    public void consultarEscala () {
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Trayectos:\n");
-            Object id = existsId("\nIngrese el id del trayecto para consultar sus escalas: ", errMessage, "\nTrayecto no encontrado, Intente de nuevo", sc, true, "trips");
+            Object id = existsId("\nIngrese el id del trayecto para consultar sus escalas: ", "\nTrayecto no encontrado, Intente de nuevo", true, "trips");
             Optional<ArrayList<String>> escalas = tripsService.getScalesFromTrip((Integer)id);
             if (escalas.isPresent()) { 
                 System.out.println("\nEscalas del trayecto:");
@@ -124,22 +133,22 @@ public class TripsConsoleAdapter {
         }
     }
 
-    public void actualizarEscala (String header, String errMessage, Scanner sc, String rta){
+    public void actualizarEscala (){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Escalas:\n");
-            Object id = existsId("\nIngrese el id de la escala a actualizar: ", errMessage, "\nEscala no encontrada, Intente de nuevo", sc, true, "flight_connections");
+            Object id = existsId("\nIngrese el id de la escala a actualizar: ", "\nEscala no encontrada, Intente de nuevo", true, "flight_connections");
             Optional<ArrayList<String>> selectedScale = tripsService.getScales((Integer)id);
             Optional<Scales> updatedScale = Optional.empty();
             if (selectedScale.isPresent()){
                 System.out.println("\nEscala seleccionada: \n" + selectedScale.get().toString());
                 System.out.println("\nAerouertos:");
-                Object idOrg = existsId("\nIngrese el id del aeropuerto de origen de la escala: ", errMessage, "\nAeropuerto no encontrado, Intente de nuevo", sc, false, "airports");
+                Object idOrg = existsId("\nIngrese el id del aeropuerto de origen de la escala: ", "\nAeropuerto no encontrado, Intente de nuevo", false, "airports");
                 Object idDes;
                 do {
                     System.out.println("\nAerouertos:");
-                    idDes = existsId("\nIngrese el id del aeropuerto de destino de la escala: ", errMessage, "\nAeropuerto no encontrado, Intente de nuevo", sc, false, "airports");
+                    idDes = existsId("\nIngrese el id del aeropuerto de destino de la escala: ", "\nAeropuerto no encontrado, Intente de nuevo", false, "airports");
                     if (idOrg.equals(idDes)) { System.out.println("\nEl aeropuerto de destino no puede ser el mismo que el de origen, Intente de nuevo"); }
                 } while (idOrg.equals(idDes));
                 Scales scale = new Scales((Integer)id, String.valueOf(idOrg), String.valueOf(idDes));
@@ -152,12 +161,12 @@ public class TripsConsoleAdapter {
         }
     }
 
-    public void eliminarEscala (String header, String errMessage, Scanner sc, String rta){
+    public void eliminarEscala (){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Escalas:\n");
-            Object id = existsId("\nIngrese el id de la escala a eliminar: ", errMessage, "\nEscala no encontrada, Intente de nuevo", sc, true, "flight_connections");
+            Object id = existsId("\nIngrese el id de la escala a eliminar: ", "\nEscala no encontrada, Intente de nuevo", true, "flight_connections");
             Optional<ArrayList<String>> selectedScale = tripsService.getScales((Integer)id);
             Optional<Scales> deletedScale = Optional.empty();
             if (selectedScale.isPresent()) {
@@ -175,12 +184,12 @@ public class TripsConsoleAdapter {
             rta = sc.nextLine();
         }
     }
-    public void actualizarTrayecto (String header, String errMessage, Scanner sc, String rta){
+    public void actualizarTrayecto (){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Trayectos:\n");
-            Object id = existsId("\nIngrese el id del trayecto a actualizar: ", errMessage, "\nTrayecto no encontrado, Intente de nuevo", sc, true, "trips");
+            Object id = existsId("\nIngrese el id del trayecto a actualizar: ", "\nTrayecto no encontrado, Intente de nuevo",true, "trips");
             Optional<Trips> selectedTrip = tripsService.getTripsById((Integer)id);
             if (selectedTrip.isPresent()){
                 System.out.println("\nAvion seleccionado: \n" + selectedTrip.get().toString());
@@ -196,25 +205,25 @@ public class TripsConsoleAdapter {
             rta = sc.nextLine();
         }
     }
-    public void consultarTrayecto(String header, String errMessage, Scanner sc, String rta) {
+    public void consultarTrayecto() {
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Trayectos:\n");
-            Object id = existsId("\nIngrese el id del trayecto a consultar: ", errMessage, "\nTrayecto no encontrado, Intente de nuevo", sc, true, "trips");
+            Object id = existsId("\nIngrese el id del trayecto a consultar: ", "\nTrayecto no encontrado, Intente de nuevo", true, "trips");
             Optional<Trips> selectedTrip = tripsService.getTripsById((Integer)id);
             if (selectedTrip.isPresent()) { System.out.println(selectedTrip.get().toString()); }
             System.out.println("\nDesea consultar otro trayecto? si/ENTER");
             rta = sc.nextLine();
         }
     }
-    public void eliminarTrayecto(String header, String errMessage, Scanner sc, String rta){
+    public void eliminarTrayecto(){
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
             System.out.println("Trayecto:\n");
-            Object id = existsId("\nIngrese el id del trayecto a eliminar: ", errMessage,
-            "\nTrayecto no encontrado, Intente de nuevo", sc, true, "trips");
+            Object id = existsId("\nIngrese el id del trayecto a eliminar: ", 
+            "\nTrayecto no encontrado, Intente de nuevo", true, "trips");
             Optional<Trips> selectedTrip = tripsService.getTripsById((Integer)id);
             if (selectedTrip.isPresent()) {
                 System.out.println(MessageFormat.format("\nEl trayecto {0} será eliminado", selectedTrip.get().toString()));
@@ -233,23 +242,12 @@ public class TripsConsoleAdapter {
         }
     }
     public void start() {
-        
-        String header = """
-            -------------
-            | TRAYECTOS |
-            -------------
-            """;
         String[] menu = {"Asignar tripulación a trayecto","Asignar aeronave a trayecto", "Consultar asignación de tripulación", "Consultar escala", "Actualizar escala","Eiminar escala","Consultar trayecto", "Actualizar trayecto" ,"Eliminar trayecto","Salir"};
-        
-        String errMessage = "El dato ingresado es incorrecto, intentelo de nuevo ";
-        
-        Scanner sc = new Scanner(System.in);
         boolean isActive = true;
         mainLoop:
         while (isActive) {
             Main.clearScreen();
             System.out.println(header);
-            
             for (int i = 0; i < menu.length; i++) {
                 System.out.println(MessageFormat.format("{0}. {1}.", (i+1), menu[i]));
             }
@@ -257,44 +255,42 @@ public class TripsConsoleAdapter {
             if(op == -1){
                 continue mainLoop;
             }
-            String rta = " ";
             switch (op) {
                 case 1:
-                    asignarTripulacion(header, errMessage, sc, rta);
+                    asignarTripulacion();
                     break;
                 case 2:
-                    asignarAvion(header, errMessage, sc, rta);
+                    asignarAvion();
                     break;
                 case 3:
-                    consultarAsignacion(header, errMessage, sc, rta);
+                    consultarAsignacion();
                     break;
                 case 4:
-                    consultarEscala(header, errMessage, sc, rta);
+                    consultarEscala();
                     break;
                 case 5:
-                    actualizarEscala(header, errMessage, sc, rta);
+                    actualizarEscala();
                     break;
                 case 6:
-                    eliminarEscala(header, errMessage, sc, rta);
+                    eliminarEscala();
                     break;
                 case 7:
-                    consultarTrayecto(header, errMessage, sc, rta);
-                    break;                   
+                    consultarTrayecto();
+                    break;
                 case 8:
-                    actualizarTrayecto(header, errMessage, sc, rta);
-                    break;       
+                    actualizarTrayecto();
+                    break;
                 case 9:
-                    eliminarTrayecto(header, errMessage, sc, rta);
-                    break;       
-                case 10:    
-                    isActive = false;     
-                    break; 
+                    eliminarTrayecto();
+                    break;
+                case 10:
+                    isActive = false;    
+                    break;
                 default:
                     System.out.println(errMessage);
                     sc.nextLine();
                     break;
-            } 
+            }
         } 
-        sc.close();
     }
 }

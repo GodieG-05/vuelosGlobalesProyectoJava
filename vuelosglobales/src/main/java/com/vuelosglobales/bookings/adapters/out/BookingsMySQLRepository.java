@@ -45,25 +45,10 @@ public class BookingsMySQLRepository implements BookingsRepository{
     @Override
     public void save(Bookings booking) {
         try (Connection connection = DriverManager.getConnection(url, user, password)){
-            Double totalPrice = null;
-            String query1 = """
-                    SELECT (f.value + t.price_trip) AS total_price
-                    FROM trip_booking_details td
-                    JOIN flight_fares f ON td.id_fares = f.id
-                    JOIN trip_booking tb ON td.id_trip_booking = tb.id
-                    JOIN trips t ON tb.id_trip = t.id
-                    WHERE tb.id = """ + booking.getId();
-            try (PreparedStatement statement = connection.prepareStatement(query1);
-                 ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    totalPrice = resultSet.getDouble("total_price");
-                }
-            }
-            String query2 = "INSERT INTO trip_booking (date, id_trip, total_price) VALUES (?,?,?)";
-            try (PreparedStatement statement = connection.prepareStatement(query2)){
+            String query = "INSERT INTO trip_booking (date, id_trip) VALUES (?,?,?)";
+            try (PreparedStatement statement = connection.prepareStatement(query)){
                 statement.setDate(1, booking.getDate());
                 statement.setInt(2, booking.getIdTrip());
-                statement.setDouble(3, totalPrice);
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

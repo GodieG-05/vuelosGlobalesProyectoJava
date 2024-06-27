@@ -12,6 +12,9 @@ import com.vuelosglobales.Main;
 import com.vuelosglobales.bookings.adapters.in.BookingsConsoleAdapter;
 import com.vuelosglobales.bookings.adapters.out.BookingsMySQLRepository;
 import com.vuelosglobales.bookings.application.BookingsService;
+import com.vuelosglobales.customers.adapters.in.CustomersConsoleAdapter;
+import com.vuelosglobales.customers.adapters.out.CustomersMySQLRepository;
+import com.vuelosglobales.customers.application.CustomersService;
 import com.vuelosglobales.trips.adapters.out.TripsMySQLRepository;
 
 
@@ -29,6 +32,9 @@ public class Customer {
     BookingsMySQLRepository bookingsMySQLRepository;
     BookingsService bookingsService;
     BookingsConsoleAdapter bookingsConsoleAdapter;
+    CustomersMySQLRepository customersMySQLRepository;
+    CustomersService customersService;
+    CustomersConsoleAdapter customersConsoleAdapter;
 
     public void printAllValues(String tableName){
         List<String> valuesList = tripsMySQLRepository.getTableValues(tableName);
@@ -100,6 +106,10 @@ public class Customer {
         bookingsMySQLRepository = new BookingsMySQLRepository(url, user, password);
         bookingsService = new BookingsService(bookingsMySQLRepository);
         bookingsConsoleAdapter = new BookingsConsoleAdapter(bookingsService);
+        customersMySQLRepository = new CustomersMySQLRepository(url, user, password);
+        customersService = new CustomersService(customersMySQLRepository);
+        customersConsoleAdapter = new CustomersConsoleAdapter(customersService);
+
         String[] menu = {"Buscar vuelos","Seleccionar vuelo","Consultar reserva de vuelo","Cancelar reserva de vuelo", "Modificar reservas de vuelo", "Añadir pasajeros",  "Seleccionar asientos", "Realizar pago","Salir"};
         boolean buscado = false;
         boolean isActive = true;
@@ -136,9 +146,13 @@ public class Customer {
                 case 5:
                     bookingsConsoleAdapter.actualizarReserva();
                     break;    
-                case 6:    
+                case 6:   
+                    customersConsoleAdapter.registrarCliente();
+                    break;
+                case 7:
                     isActive = false;     
                     break; 
+
                 default:
                     System.out.println(errMessage);
                     sc.nextLine();

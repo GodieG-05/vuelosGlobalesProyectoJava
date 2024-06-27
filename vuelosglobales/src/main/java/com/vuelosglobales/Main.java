@@ -38,6 +38,7 @@ public class Main {
                 x = Integer.parseInt(sc.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println(errMesage);
+                sc.nextLine();
                 x = -1;
                 if (txt == "-> ") {
                     return x;
@@ -105,19 +106,19 @@ public class Main {
 
             switch (op) {
                 case 1:
-                    // validPassword(sc, "\nIngrese la contraseña del administrador: ", "administrador");
+                    validPassword(sc, "\nIngrese la contraseña del administrador: ", "administrador");
                     admin.start(url, user, password);
                     break;
                 case 2:
-                    // validPassword(sc, "\nIngrese la contraseña del agente: ", "agente");
+                    validPassword(sc, "\nIngrese la contraseña del agente: ", "agente");
                     agent.start(url, user, password);
                     break;      
                 case 3:
-                    // validPassword(sc, "\nIngrese la contraseña del tecnico: ", "tecnico");
+                    validPassword(sc, "\nIngrese la contraseña del tecnico: ", "tecnico");
                     revisionsConsoleAdapter.start();
                     break;                   
                 case 4:
-                    // validPassword(sc, "\nIngrese la contraseña del cliente: ", "cliente");
+                    validPassword(sc, "\nIngrese la contraseña del cliente: ", "cliente");
                     customer.start(url, user, password);
                     break;       
                 case 5:    

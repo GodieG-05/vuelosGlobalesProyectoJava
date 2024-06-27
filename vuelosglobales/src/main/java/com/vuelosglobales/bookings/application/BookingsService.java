@@ -16,8 +16,12 @@ public class BookingsService {
     public int getLastId(){
         return BookingsRepository.getLastId();
     }
-    public void createBookings(Bookings DocumentType){
-        BookingsRepository.save(DocumentType);
+    public void createBookings(Bookings Booking){
+        BookingsRepository.save(Booking);
+    }
+
+    public void updateBookings(Bookings Booking){
+        BookingsRepository.save(Booking);
     }
 
     public Optional<Bookings> getBookingById(int id){

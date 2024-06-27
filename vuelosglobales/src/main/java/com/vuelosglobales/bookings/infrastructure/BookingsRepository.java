@@ -8,6 +8,7 @@ import com.vuelosglobales.bookings.domain.models.Bookings;
 public interface BookingsRepository {
     int getLastId();
     void save(Bookings booking);
+    void update(Bookings booking);
     void delete(int id);
     Optional<Bookings> findById(int id);
     List<Bookings> findAll();

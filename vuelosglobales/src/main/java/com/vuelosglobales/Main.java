@@ -11,6 +11,7 @@ import com.vuelosglobales.revisions.application.RevisionsService;
 import com.vuelosglobales.users.Admin;
 import com.vuelosglobales.users.Agent;
 // import com.vuelosglobales.users.Customer;
+import com.vuelosglobales.users.Customer;
 
 // import com.vuelosglobales.users.Admin;
 // import com.vuelosglobales.users.Agent;
@@ -78,6 +79,7 @@ public class Main {
         RevisionsConsoleAdapter revisionsConsoleAdapter = new RevisionsConsoleAdapter(revisionsService);
         Admin admin = new Admin();
         Agent agent = new Agent();
+        Customer customer = new Customer();
         // Customer customer = new Customer();
         String header = """
         -------------------
@@ -103,19 +105,20 @@ public class Main {
 
             switch (op) {
                 case 1:
-                    validPassword(sc, "\nIngrese la contraseña del administrador: ", "administrador");
+                    // validPassword(sc, "\nIngrese la contraseña del administrador: ", "administrador");
                     admin.start(url, user, password);
                     break;
                 case 2:
-                    validPassword(sc, "\nIngrese la contraseña del agente: ", "agente");
+                    // validPassword(sc, "\nIngrese la contraseña del agente: ", "agente");
                     agent.start(url, user, password);
                     break;      
                 case 3:
-                    validPassword(sc, "\nIngrese la contraseña del tecnico: ", "tecnico");
+                    // validPassword(sc, "\nIngrese la contraseña del tecnico: ", "tecnico");
                     revisionsConsoleAdapter.start();
                     break;                   
                 case 4:
-                    validPassword(sc, "\nIngrese la contraseña del culiente: ", "culiente");
+                    // validPassword(sc, "\nIngrese la contraseña del cliente: ", "cliente");
+                    customer.start(url, user, password);
                     break;       
                 case 5:    
                     isActive = false;     

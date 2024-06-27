@@ -283,6 +283,28 @@ public class TripsMySQLRepository implements TripsRepository{
     }
 
     @Override
+    public Optional<ArrayList<String>> findByIdFromPlace(String idOrg, String idDes) {
+        ArrayList<String> flightsList = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT id, id_origin, id_destination FROM flight_connections WHERE id_origin = ? AND id_destination = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, idOrg);
+                statement.setString(2, idDes);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String flights = "[id=" + resultSet.getInt("id") + ", id_origin_airport=" + resultSet.getString("id_origin") + ", id_destination_airport=" + resultSet.getString("id_destination") + "]";
+                        flightsList.add(flights);
+                    }
+                    return Optional.of(flightsList);
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ArrayList<String>> findTripulation (int idTrip){
         ArrayList<String> tripulationArray = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
@@ -364,6 +386,22 @@ public class TripsMySQLRepository implements TripsRepository{
     }
 
     @Override
+    public void selectFlight(String idCus, int idFli, int idFar, Date date) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "CALL SeleccionarVuelo(?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, idCus);
+                statement.setInt(2, idFli);
+                statement.setInt(3, idFar);
+                statement.setDate(4, date);
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public List<String> getTableValues(String tableName) {
         List<String> values = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
@@ -372,17 +410,17 @@ public class TripsMySQLRepository implements TripsRepository{
                 case "trips":
                     query = "SELECT id, trip_date, price_trip FROM " + tableName;
                     break;
-                case "employees","airports":
-                    query = "SELECT id, name FROM " + tableName;
-                    break;
                 case "planes":
                     query = "SELECT id, plates FROM " + tableName;
                     break;
                 case "flight_connections":
                     query = "SELECT id, id_origin, id_destination FROM " + tableName;
                     break;
+                case "flight_fares":
+                    query = "SELECT id, description, value FROM " + tableName;
+                    break;
                 default:
-                    query = "";
+                    query = "SELECT id, name FROM " + tableName;
                     break;
             }
             try (PreparedStatement statement = connection.prepareStatement(query);
@@ -396,21 +434,27 @@ public class TripsMySQLRepository implements TripsRepository{
                                 Double priceTrip = resultSet.getDouble("price_trip");
                                 value = "[id=" + idTrip + ", trip_date=" + tripDate + ", price_trip=" + priceTrip + "]";
                                 break;
-                            case "employees", "airports":
-                                String id = resultSet.getString("id");
-                                String name = resultSet.getString("name");
-                                value = "[id=" + id + ", name=" + name + "]";
-                                break;
                             case "planes":
                                 String idPLane = resultSet.getString("id");
                                 String plates = resultSet.getString("plates");
                                 value = "[id=" + idPLane + ", plates=" + plates + "]";
                                 break;
+                            case "flight_fares":
+                                    int idFar = resultSet.getInt("id");
+                                    String descrip = resultSet.getString("description");
+                                    int val = resultSet.getInt("value");
+                                    value = "[id=" + idFar + ", name=" + descrip + ", value=" + val +"]";
+                                    break;
                             case "flight_connections":
                                 int idScale = resultSet.getInt("id");
                                 String idOrg = resultSet.getString("id_origin");
                                 String idDes = resultSet.getString("id_destination");
                                 value = "[id=" + idScale + ", id_origin_airport=" + idOrg + ", id_destination_airport=" + idDes +"]";
+                                break;
+                            default:
+                                String id = resultSet.getString("id");
+                                String name = resultSet.getString("name");
+                                value = "[id=" + id + ", name=" + name + "]";
                                 break;
                         }
                         values.add(value);

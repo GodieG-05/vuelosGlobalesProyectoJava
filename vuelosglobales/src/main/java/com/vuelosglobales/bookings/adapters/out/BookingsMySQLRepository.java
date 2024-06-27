@@ -57,6 +57,21 @@ public class BookingsMySQLRepository implements BookingsRepository{
     }
 
     @Override
+    public void update(Bookings booking) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "UPDATE bookings SET date = ?, id_trip = ? WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setDate(1, booking.getDate());
+                statement.setInt(2, booking.getIdTrip());
+                statement.setInt(3, booking.getId());
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void delete(int id) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             String query1 = "DELETE FROM trip_booking_details WHERE id_trip_booking = ?";

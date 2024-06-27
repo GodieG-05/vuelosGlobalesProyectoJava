@@ -77,6 +77,23 @@ public class BookingsConsoleAdapter {
         }
     }
 
+    public void actualizarReserva(){
+        while (!rta.isEmpty()) {
+            Main.clearScreen();
+            System.out.println(header);
+            System.out.println("Reservas:\n");
+            int id = existsId("\nIngrese el id de la reserva a consultar: ", errMessage, "\nReserva no encontrada, Intente de nuevo", sc, "trip_booking");             
+            Date date = Main.validDate(sc, errMessage, "Ingrese la nueva fecha de la reserva en formato YYYY-MM-DD: ");
+            System.out.println("\nTrayectos:\n");
+            int id_trip = existsId("\nIngrese el id del nuevo trayecto de su reserva: ", errMessage, "\nTrayecto no encontrado, Intente de nuevo", sc, "trips");
+            Bookings bookings = new Bookings(id, date, id_trip);
+            bookingsService.updateBookings(bookings);
+            Optional<Bookings> updatedBooking = bookingsService.getBookingById(id);
+            if (updatedBooking.isPresent()) { System.out.println(updatedBooking.get().toString()); }
+            System.out.println("\nDesea actualizar otra reserva? si/ENTER");
+            rta = sc.nextLine();
+        }
+    }
     public void eliminarReserva(){
         while (!rta.isEmpty()) {
             Main.clearScreen();

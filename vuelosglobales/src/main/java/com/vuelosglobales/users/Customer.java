@@ -16,6 +16,7 @@ import com.vuelosglobales.bookings.domain.models.Payment;
 import com.vuelosglobales.customers.adapters.in.CustomersConsoleAdapter;
 import com.vuelosglobales.customers.adapters.out.CustomersMySQLRepository;
 import com.vuelosglobales.customers.application.CustomersService;
+import com.vuelosglobales.planes.adapters.out.PlaneMySQLRepository;
 import com.vuelosglobales.trips.adapters.out.TripsMySQLRepository;
 
 
@@ -36,6 +37,7 @@ public class Customer {
     CustomersMySQLRepository customersMySQLRepository;
     CustomersService customersService;
     CustomersConsoleAdapter customersConsoleAdapter;
+    PlaneMySQLRepository planeMySQLRepository;
 
     public void printAllValues(String tableName){
         List<String> valuesList = tripsMySQLRepository.getTableValues(tableName);
@@ -125,6 +127,21 @@ public class Customer {
         }
     }
 
+    public void seleccionarAsiento() {
+        Main.clearScreen();
+        System.out.println(header);
+        System.out.println("\nAviones:\n");
+        Object idAvion = existsId("\nIngrese el id del avion: ", errMessage, true, "planes");
+        int capacity = planeMySQLRepository.getSeatings((Integer)idAvion);
+        int seating;
+        do {
+            seating = Main.validInt(sc, errMessage, "\nIngrese numero de asiento (" + capacity + ") disponibles: ");
+            if (capacity < seating | seating <= 0) {
+                System.out.println("Error, asiento no encontrado, Intentelo de nuevo\n");
+            } else { System.out.println("Asiento registrado exitosamente, gracias por volar con nosotros."); }
+        } while (capacity > seating && seating > 0);
+    }
+
     public void start(String url, String user, String password){
         tripsMySQLRepository = new TripsMySQLRepository(url, user, password);
         bookingsMySQLRepository = new BookingsMySQLRepository(url, user, password);
@@ -133,6 +150,7 @@ public class Customer {
         customersMySQLRepository = new CustomersMySQLRepository(url, user, password);
         customersService = new CustomersService(customersMySQLRepository);
         customersConsoleAdapter = new CustomersConsoleAdapter(customersService);
+        planeMySQLRepository = new PlaneMySQLRepository(url, user, password);
 
         String[] menu = {"Buscar vuelos","Seleccionar vuelo","Consultar reserva de vuelo","Cancelar reserva de vuelo", "Modificar reservas de vuelo", "Añadir pasajeros",  "Seleccionar asientos", "Realizar pago","Salir"};
         Integer idTbd = null;
@@ -173,6 +191,7 @@ public class Customer {
                     customersConsoleAdapter.registrarCliente();
                     break;
                 case 7:
+                    seleccionarAsiento();
                     break; 
                 case 8:
                     if (idTbd == null) {

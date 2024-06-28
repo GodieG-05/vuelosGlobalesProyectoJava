@@ -10,11 +10,8 @@ import com.vuelosglobales.revisions.adapters.out.RevisionsMySQLRepository;
 import com.vuelosglobales.revisions.application.RevisionsService;
 import com.vuelosglobales.users.Admin;
 import com.vuelosglobales.users.Agent;
-// import com.vuelosglobales.users.Customer;
 import com.vuelosglobales.users.Customer;
 
-// import com.vuelosglobales.users.Admin;
-// import com.vuelosglobales.users.Agent;
 
 public class Main {
     // Codigo para limipiar consola
@@ -73,8 +70,8 @@ public class Main {
     }
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/travel_agency";
-        String user = "root";
-        String password = "12345";
+        String user = "campus2023";
+        String password = "campus2023";
         RevisionsMySQLRepository revisionsMySQLRepository = new RevisionsMySQLRepository(url, user, password);
         RevisionsService revisionsService = new RevisionsService(revisionsMySQLRepository);
         RevisionsConsoleAdapter revisionsConsoleAdapter = new RevisionsConsoleAdapter(revisionsService);

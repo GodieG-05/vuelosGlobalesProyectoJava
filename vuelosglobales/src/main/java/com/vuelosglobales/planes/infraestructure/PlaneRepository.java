@@ -7,6 +7,7 @@ import com.vuelosglobales.planes.domain.models.Plane;
 
 public interface PlaneRepository {
     int getLastId();
+    int getSeatings(int id);
     void save(Plane plane);
     void update(Plane plane);
     void delete(int id);

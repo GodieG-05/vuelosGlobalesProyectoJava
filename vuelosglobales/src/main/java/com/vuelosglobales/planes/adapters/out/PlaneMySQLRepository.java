@@ -41,6 +41,26 @@ public class PlaneMySQLRepository implements PlaneRepository{
         return -1;
     }
 
+    
+
+    @Override
+    public int getSeatings(int id) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT capacity FROM planes WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getInt("capacity");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     @Override
     public void save (Plane plane) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {

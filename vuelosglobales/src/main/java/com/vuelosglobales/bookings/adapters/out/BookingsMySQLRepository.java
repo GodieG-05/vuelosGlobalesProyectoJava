@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
  
 import com.vuelosglobales.bookings.domain.models.Bookings;
+import com.vuelosglobales.bookings.domain.models.Payment;
 import com.vuelosglobales.bookings.infrastructure.BookingsRepository;
 
 public class BookingsMySQLRepository implements BookingsRepository{
@@ -25,9 +26,9 @@ public class BookingsMySQLRepository implements BookingsRepository{
     }
     
     @Override
-    public int getLastId() {
+    public int getLastId(String tableName) {
         try (Connection connection = DriverManager.getConnection(url, user, password)){
-            String query = "SELECT MAX(id) AS max_id FROM trip_booking";
+            String query = "SELECT MAX(id) AS max_id FROM " + tableName;
             try (PreparedStatement statement = connection.prepareStatement(query)){
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if(resultSet.next()){
@@ -41,14 +42,31 @@ public class BookingsMySQLRepository implements BookingsRepository{
         } 
         return -1;
     }
-
+ 
     @Override
     public void save(Bookings booking) {
         try (Connection connection = DriverManager.getConnection(url, user, password)){
-            String query = "INSERT INTO trip_booking (date, id_trip) VALUES (?,?,?)";
+            String query = "INSERT INTO trip_booking (date, id_trip) VALUES (?,?)";
             try (PreparedStatement statement = connection.prepareStatement(query)){
                 statement.setDate(1, booking.getDate());
                 statement.setInt(2, booking.getIdTrip());
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }  
+    }
+
+    @Override
+    public void savePayment(Payment payment) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)){
+            String query = "INSERT INTO payments (id_trip_booking_details, id_payment_method, card_number) VALUES (?,?,?)";
+            try (PreparedStatement statement = connection.prepareStatement(query)){
+                statement.setInt(1, payment.getIdTbd());
+                statement.setInt(2, payment.getIdMetodo());
+                if (payment.getNumero() == null) {
+                    statement.setNull(3, java.sql.Types.VARCHAR);
+                } else { statement.setInt(3, payment.getNumero()); }
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -177,6 +195,30 @@ public class BookingsMySQLRepository implements BookingsRepository{
                             resultSet.getInt("id_trip")
                         );
                         return Optional.of(booking);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Payment> findPaymentById(int id) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT * FROM payments WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        Payment payment = new Payment(
+                            resultSet.getInt("id"),
+                            resultSet.getInt("id_trip_booking_details"),
+                            resultSet.getInt("id_payment_method"),
+                            resultSet.getInt("card_number")
+                        );
+                        return Optional.of(payment);
                     }
                 }
             }

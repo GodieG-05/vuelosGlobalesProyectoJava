@@ -21,7 +21,7 @@ public interface TripsRepository {
     Optional<ArrayList<String>> findScalesFromTrip(int idTrip);
     Optional<ArrayList<String>> findScale(int id);
     List<Trips> findAll();
-    void selectFlight(String idCus, int idFli, int idFar, Date date);
+    int selectFlight(String idCus, int idFli, int idFar, Date date);
     List<String> getTableValues(String tableName);
     List<Object> getIDs(String tableName);
 }

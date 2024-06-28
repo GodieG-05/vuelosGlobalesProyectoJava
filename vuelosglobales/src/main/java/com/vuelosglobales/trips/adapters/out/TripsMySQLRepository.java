@@ -386,19 +386,55 @@ public class TripsMySQLRepository implements TripsRepository{
     }
 
     @Override
-    public void selectFlight(String idCus, int idFli, int idFar, Date date) {
+    public int selectFlight(String idCus, int idFli, int idFar, Date date) {
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String query = "CALL SeleccionarVuelo(?, ?, ?, ?)";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
+            int idTrip = -1;
+            Double valueF = -1.0;
+            Double priceTr = -1.0;
+            String query1 = "SELECT id_trip FROM flight_connections WHERE id = " + idFli;
+            try (PreparedStatement statement = connection.prepareStatement(query1);
+                 ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    idTrip = resultSet.getInt("id_trip");
+                }
+            }
+            String query2 = "SELECT price_trip FROM trips WHERE id = " + idTrip;
+            try (PreparedStatement statement = connection.prepareStatement(query2);
+                 ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    priceTr = resultSet.getDouble("price_trip");
+                }
+            }
+            String query3 = "SELECT value FROM flight_fares WHERE id = " + idFar;
+            try (PreparedStatement statement = connection.prepareStatement(query3);
+                 ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    valueF = resultSet.getDouble("value");
+                }
+            }
+            String query4 = "CALL SeleccionarVuelo(?, ?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(query4)) {
                 statement.setString(1, idCus);
                 statement.setInt(2, idFli);
                 statement.setInt(3, idFar);
                 statement.setDate(4, date);
+                statement.setDouble(5, valueF + priceTr);
                 statement.executeUpdate();
+            }
+            // String query5 = "SELECT id FROM trip_booking_details WHERE id_trip_booking = ? AND id_customers = ?";
+            String query5 = "SELECT MAX(id) FROM trip_booking";
+            try (PreparedStatement statement = connection.prepareStatement(query5);
+                 ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getInt("MAX(id)");   
+                    }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        } 
+        return -1;
     }
 
     @Override

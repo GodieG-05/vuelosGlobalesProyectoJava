@@ -12,6 +12,7 @@ import com.vuelosglobales.Main;
 import com.vuelosglobales.bookings.adapters.in.BookingsConsoleAdapter;
 import com.vuelosglobales.bookings.adapters.out.BookingsMySQLRepository;
 import com.vuelosglobales.bookings.application.BookingsService;
+import com.vuelosglobales.bookings.domain.models.Payment;
 import com.vuelosglobales.customers.adapters.in.CustomersConsoleAdapter;
 import com.vuelosglobales.customers.adapters.out.CustomersMySQLRepository;
 import com.vuelosglobales.customers.application.CustomersService;
@@ -83,7 +84,8 @@ public class Customer {
         return true;
     }
 
-    public void seleccionarVuelos() {
+    public int seleccionarVuelos() {
+        int idTbd = -1;
         while (!rta.isEmpty()) {
             Main.clearScreen();
             System.out.println(header);
@@ -95,8 +97,30 @@ public class Customer {
             Object idFli = existsId("\nIngrese el id del vuelo a seleccionar: ", "Vuelo no encontrado, Intente de nuevo", true, "flight_connections");
             System.out.println("\nTarifas:\n");
             Object idFar = existsId("\nIngrese el id de la tarifa deseada: ", "Tarifa no encontrado, Intente de nuevo", true, "flight_fares");
-            tripsMySQLRepository.selectFlight(String.valueOf(idCus), (Integer)idFli, (Integer)idFar, date);
-            System.out.println("\nDesea buscar otro vuelo?  si/ENTER ");
+            idTbd = tripsMySQLRepository.selectFlight(String.valueOf(idCus), (Integer)idFli, (Integer)idFar, date);
+            System.out.println("\nDesea seleccionar otro vuelo?  si/ENTER ");
+            rta = sc.nextLine();
+        }
+        return idTbd;
+    }
+
+    public void realizarPago(int idTbd) {
+        while (!rta.isEmpty()) {
+            Main.clearScreen();
+            System.out.println(header);
+            System.out.println("\nMetodos de pago:\n");
+            int id = bookingsMySQLRepository.getLastId("payments");
+            Object idMetodo = existsId("\nIngrese el id del metodo de pago: ", errMessage, true, "payment_methods");
+            int numero = -1;
+            if ((Integer)idMetodo != 4) {
+                numero = Main.validInt(sc, errMessage, "\nIngere el numero de la cuenta: ");
+            } 
+            Payment newPayment = new Payment(id, idTbd, (Integer)idMetodo, numero);
+            bookingsMySQLRepository.savePayment(newPayment);
+            Optional<Payment> createdPayment = bookingsMySQLRepository.findPaymentById(id);
+            createdPayment.ifPresentOrElse(p -> System.out.println("\nEl pago: " + p.toString() + " fue realizado correctamente."), 
+            () -> System.out.println("El pago no fue realizado correctamente"));
+            System.out.println("\nDesea realizar otro pago? si/ENTER");
             rta = sc.nextLine();
         }
     }
@@ -111,6 +135,7 @@ public class Customer {
         customersConsoleAdapter = new CustomersConsoleAdapter(customersService);
 
         String[] menu = {"Buscar vuelos","Seleccionar vuelo","Consultar reserva de vuelo","Cancelar reserva de vuelo", "Modificar reservas de vuelo", "Añadir pasajeros",  "Seleccionar asientos", "Realizar pago","Salir"};
+        Integer idTbd = null;
         boolean buscado = false;
         boolean isActive = true;
         mainLoop:
@@ -129,13 +154,11 @@ public class Customer {
                 case 1:
                     buscado = buscarVuelos();
                     break;
-                case 2: 
-                    if (buscado) {
-                        seleccionarVuelos();
-                    } else {
+                case 2:
+                    if (!buscado) {
                         System.out.print("Para seleccionar un vuelo primero debes buscar uno, Intentalo de nuevo ");
                         sc.nextLine();
-                    }
+                    } else { idTbd = seleccionarVuelos(); }
                     break;
                 case 3:
                     bookingsConsoleAdapter.consultarReserva();
@@ -150,6 +173,14 @@ public class Customer {
                     customersConsoleAdapter.registrarCliente();
                     break;
                 case 7:
+                    break; 
+                case 8:
+                    if (idTbd == null) {
+                        System.out.print("Para realizar un pago primero debes seleccionar uno, Intentalo de nuevo ");
+                        sc.nextLine();
+                    } else { realizarPago(idTbd); }
+                    break; 
+                case 9:
                     isActive = false;     
                     break; 
 

@@ -45,12 +45,12 @@ public class BookingsConsoleAdapter {
         } while (!IDsLsit.contains(fId));
         return fId;
     }
-
+ 
     public void registrarReserva(){
         while (!rta.isEmpty()) {            
             Main.clearScreen();
             System.out.println(header);
-            int id = bookingsService.getLastId() + 1;
+            int id = bookingsService.getLastId("trip_booking") + 1;
             Date date = Main.validDate(sc, errMessage, "Ingrese la fecha de la reserva en formato YYYY-MM-DD: ");
             System.out.println("\nTrayectos:\n");
             int id_trip = existsId("\nIngrese el id del trayecto de su reserva: ", errMessage, "\nTrayecto no encontrado, Intente de nuevo", sc, "trips");

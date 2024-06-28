@@ -13,8 +13,8 @@ public class BookingsService {
         this.BookingsRepository = BookingsRepository;
     }
     
-    public int getLastId(){
-        return BookingsRepository.getLastId();
+    public int getLastId(String tableName){
+        return BookingsRepository.getLastId(tableName);
     }
     public void createBookings(Bookings Booking){
         BookingsRepository.save(Booking);

@@ -70,8 +70,8 @@ public class Main {
     }
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/travel_agency";
-        String user = "campus2023";
-        String password = "campus2023";
+        String user = "root";
+        String password = "12345";
         RevisionsMySQLRepository revisionsMySQLRepository = new RevisionsMySQLRepository(url, user, password);
         RevisionsService revisionsService = new RevisionsService(revisionsMySQLRepository);
         RevisionsConsoleAdapter revisionsConsoleAdapter = new RevisionsConsoleAdapter(revisionsService);

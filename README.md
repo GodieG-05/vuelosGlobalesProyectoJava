@@ -1,4 +1,4 @@
-<p style="font-size: 25px;"><b>Vuelos Globales - Sistema de Gestión de Agencia de Viajes</b></p>
+<p style="font-size: 50px;"><b>Vuelos Globales - Sistema de Gestión de Agencia de Viajes</b></p>
 
 
 

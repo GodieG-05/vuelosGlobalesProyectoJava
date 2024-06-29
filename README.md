@@ -28,7 +28,7 @@ El sistema utiliza una base de datos relacional para almacenar y gestionar toda 
 
 <p style="font-size: 25px;"><b>Estructura del Proyecto</b></p>
 
-**El proyecto está organizado de la siguiente manera: **
+**El proyecto está organizado de la siguiente manera:**
 
 * **domain:** Contiene las clases que representan las entidades del sistema, con constructores, atributos y métodos getters/setters. 
 
